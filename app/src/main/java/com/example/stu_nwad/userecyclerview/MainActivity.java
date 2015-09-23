@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 控件及常量
 
     public static final String TAG = "POSTTEST";
-
+    public static final String EMPTY_CLASS_STRING = "";
     public static final String[] LABELS = {"一", "二", "三", "四", "五", "六", "日"};
 
     private EditText address_edit;
@@ -84,28 +83,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getAllViews();
         submit_button.setOnClickListener(this);
 
-
-        // specify an adapter (see also next example)
-//        String[] myDataset = new String[100];
-//        for(int i = 0 ; i < myDataset.length ; ++i){
-//            if (i == 0) {
-//                myDataset[i] = "";
-//                continue;
-//            }else if (i <= 7){
-//                myDataset[i] = "周" + i;
-//                continue;
-//            }else if(i % 8 == 0){
-//                myDataset[i] = "" + (i / 8);
-//                continue;
-//            }
-//            if (i % 3 == 0) {
-//                myDataset[i] = "计算机组织与体系结构";
-//            }else
-//                myDataset[i] = "测试呵呵";
-////            myDataset[i] = "item" + i;
-//        }
-//        mAdapter = new MyAdapter(myDataset);
-//        mRecyclerView.setAdapter(mAdapter);
 
     }
 
@@ -166,11 +143,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String  response = performPostCall(requestURL, params[0]);
                 return response;
             }
-
-        /*
-        {"classes":[{"name":"[CST2103A]计算机组织与体系结构I","id":"80930","teacher":"张杰/林艺文(实验)","room":"E401","duration":"1 -16","days":{"w0":"None","w1":"None","w2":"89","w3":"None","w4":"AB","w5":"None","w6":"None"}}
-        ,{"name":"[CST2201A]计算机图形学","id":"80931","teacher":"廖海泳","room":"E208","duration":"1 -16","days":{"w0":"None","w1":"None","w2":"67","w3":"None","w4":"None","w5":"None","w6":"None"}},{"name":"[CST2304A]离散数学II","id":"80929","teacher":"孙浩军","room":"E207","duration":"1 -16","days":{"w0":"None","w1":"None","w2":"12","w3":"None","w4":"None","w5":"None","w6":"None"}},{"name":"[EEG2053A]电工电子学","id":"81229","teacher":"柳平/张琼/陈征(实验)/夏隽娟(实验)","room":"D座504","duration":"1 -14","days":{"w0":"None","w1":"67","w2":"None","w3":"None","w4":"67","w5":"None","w6":"None"}},{"name":"[ELC4]英语(ELC4)","id":"79781","teacher":"林少娟","room":"D座206","duration":"1 -16","days":{"w0":"None","w1":"AB","w2":"None","w3":"None","w4":"90","w5":"None","w6":"None"}},{"name":"[MAT2801A]高等微积分","id":"80468","teacher":"*","room":"讲堂四","duration":"1 -16","days":{"w0":"None","w1":"None","w2":"34","w3":"None","w4":"12","w5":"None","w6":"None"}},{"name":"[MAT2802A]概率论与数理统计（工科）","id":"80470","teacher":"林小苹","room":"讲堂四","duration":"1 -16","days":{"w0":"None","w1":"None","w2":"None","w3":"None","w4":"单34","w5":"34","w6":"None"}},{"name":"[PED1071A]乒乓球（1）","id":"79981","teacher":"陈肯","room":"乒乓球场（体育馆）","duration":"1 -16","days":{"w0":"None","w1":"None","w2":"AB","w3":"None","w4":"None","w5":"None","w6":"None"}}]}
-         */
 
             @Override
             protected void onPostExecute(String response){
@@ -266,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             class LessonAdapter extends BaseAdapter {
 
 
-
                 Object[] objs = new Object[14 * 8];
 
                 private Context context;
@@ -274,6 +245,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 private void init(){
 
                     Log.d(TAG, "start init()");
+
+                    for(int i = 0 ; i < objs.length ; ++i)
+                        objs[i] = EMPTY_CLASS_STRING;   // 初始化数据
 
                     // 处理非课程的数据
                     for (int i = 0 ; i < objs.length ; ++i){
@@ -311,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 objs[i] = label;
                             }
                         }else{
-                            objs[i] = "None"; // 置为空
+                            objs[i] = EMPTY_CLASS_STRING; // 置为空
                         }
                     }
                     Log.d(TAG, "before inflate class_table");
@@ -324,12 +298,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             // key 的值是  w1 w2 这种格式
                             String class_time = lesson.days.get(key);
                             Log.d(TAG, "class_time " + class_time);
-                            if (!class_time.equals("None")){
+                            if (!class_time.equals(EMPTY_CLASS_STRING)){
                                 // 添加到obj数组中
                                 int offset = Integer.parseInt( key.substring(1));   // 得到 w1 中的数字部分
+                                boolean hasBeenAdded = false;
                                 for(int count = 0 ; count < class_time.length() ; ++count){
+
                                     char c = class_time.charAt(count);  // 得到数据
-                                    int row = 0;
+                                    int row = -1;
                                     switch (c){
                                         case '0':
                                             row = 10;
@@ -344,13 +320,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             row = 13;
                                             break;
                                         case '单':   // 跳过这个字符
+                                        case '双':
+                                            hasBeenAdded = false;
                                             break;
                                         default:
                                             row = c - '0';
                                             break;
                                     }
                                     int index = row * 8 + offset;
-                                    objs[index] = lesson;   // 将这节课添加到合适的位置
+                                    if (row == -1)   // 说明是单双周的情况
+                                        continue;
+                                    if (!hasBeenAdded) {     // 一节课添加一次即可
+                                        objs[index] = lesson;   // 将这节课添加到合适的位置
+                                        hasBeenAdded = true;
+                                    }else{
+                                        objs[index] = "同上";
+                                    }
+
                                 }
                             }
                         }
