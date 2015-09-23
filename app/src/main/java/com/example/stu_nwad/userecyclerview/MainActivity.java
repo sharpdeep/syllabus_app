@@ -27,6 +27,11 @@ import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -110,15 +115,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        // 先判断有无之前保存的文件
+        String username = username_edit.getText().toString();
+        String requestURL = address_edit.getText().toString();
+        PostEvent postEvent = new PostEvent(result_text_view, requestURL);
+
+        try {
+            FileInputStream inStream = openFileInput(username);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length= -1 ;
+            while((length=inStream.read(buffer))!=-1)   {
+                stream.write(buffer,0,length);  // 写入字节流中
+            }
+            stream.close();
+            inStream.close();
+            String json_data = stream.toString();
+            postEvent.display(json_data);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if (v.getId() == R.id.submit_button) {
-            String requestURL = address_edit.getText().toString();
-            String username = username_edit.getText().toString();
+
             String passwd = passwd_edit.getText().toString();
             HashMap<String, String> postData = new HashMap<String, String>();
             postData.put("username", username);
             postData.put("password", passwd);
             postData.put("submit", "query");
-            PostEvent postEvent = new PostEvent(result_text_view, requestURL);
+
             Log.d(TAG, "onClick");
             postEvent.execute(postData);
         }
@@ -144,24 +171,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return response;
             }
 
-            @Override
-            protected void onPostExecute(String response){
-//            view.setText(response);
-                // 处理返回的结果
-                // 整个json对象是一个课程表
-//            JSONObject curriculum = new JSONObject();
-//            // 这张表里面课程的数组
-//            JSONArray classes = new JSONArray();
+            public void display(String json_data){
+                onPostExecute(json_data);
+            }
 
+            public boolean parseJSON(String json_data){
                 // 用response作为json传给 JSONTOkener
-                JSONTokener jsonParser = new JSONTokener(response);
+                JSONTokener jsonParser = new JSONTokener(json_data);
                 ArrayList<Lesson> all_classes = new ArrayList<Lesson>();
                 try {
                     JSONObject curriculum = (JSONObject) jsonParser.nextValue();
                     // 得到所有课程的数组
                     JSONArray classes = curriculum.getJSONArray("classes");
                     Log.d(TAG, classes.length() + " classes");
-                    for (int i = 0 ; i < classes.length(); ++i){
+                    for (int i = 0; i < classes.length(); ++i) {
                         // 得到每一节课
                         JSONObject lesson = (JSONObject) classes.get(i);
                         // 处理每一节课的信息
@@ -187,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         JSONObject days = lesson.getJSONObject("days");
                         final int weekdays = 7;
                         HashMap<String, String> lesson_days = new HashMap<String, String>();
-                        for (int j = 0 ; j < weekdays ; ++j){
+                        for (int j = 0; j < weekdays; ++j) {
                             String key = "w" + j;
                             String isNull = days.getString(key);
                             if (!isNull.equals("None"))     // 去除没有的天数
@@ -198,16 +221,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         all_classes.add(cls);
                     }
-
-                    StringBuilder sb = new StringBuilder();
-                    // 所有的class都被读取到了
-                    for(Lesson lesson: all_classes){
-                        sb.append(lesson.name + "【" + lesson.room + "】" + lesson.days.toString() + "\n");
-                    }
-//                view.setText(sb.toString());
-
                     this.all_classes = all_classes;
+                    return true;
+                }catch (JSONException e) {
+                    Log.d(TAG, e.toString());
+                    return false;
+                }
+            }
 
+            @Override
+            protected void onPostExecute(String response){
+                if (parseJSON(response)) {
                     LessonAdapter adapter = new LessonAdapter(MainActivity.this);
                     Object [] objs = adapter.objs;
                     StringBuilder stringBuilder = new StringBuilder();
@@ -216,23 +240,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             stringBuilder.append(adapter.objs[i].toString() + "\n");
                         }
                     }
-//                view.setText(stringBuilder.toString());
                     Log.d(TAG, stringBuilder.toString());
-//                ArrayList<Object> obj_list = new ArrayList<Object>();
-//                for(int i = 0 ; i < objs.length ;++i){
-//                    obj_list.add(objs[i]);
-//                }
-//                    ArrayAdapter<Object> real_adpater = new ArrayAdapter<Object>(MainActivity.this, android.R.layout.simple_list_item_1, objs);
                     Log.d(TAG, "established adapter");
-
                     mAdapter = new MyAdapter(objs);
                     mRecyclerView.setAdapter(mAdapter);
 
-
-                }catch (JSONException e){
-                    Log.d(TAG, e.toString());
+                    // 保存文件
+                    String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
+                    try{
+                        FileOutputStream out = openFileOutput(username, Context.MODE_PRIVATE);
+                        out.write(response.getBytes("UTF-8"));
+                        out.flush();
+                        out.close();
+                    }catch (FileNotFoundException e){
+                        Log.d(TAG, e.toString());
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-
             }
 
             class LessonAdapter extends BaseAdapter {
