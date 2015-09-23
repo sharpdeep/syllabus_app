@@ -18,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -52,14 +53,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 控件及常量
 
     public static final String TAG = "POSTTEST";
-    public static final String EMPTY_CLASS_STRING = "";
+    public static final String EMPTY_CLASS_STRING = "NONE";
     public static final String[] LABELS = {"一", "二", "三", "四", "五", "六", "日"};
+
+    public static final String[] YEARS = {"2012-2013", "2013-2014", "2014-2015", "2015-2016", "2016-2017", "2017-2018"};
+    public static final String[] SEMESTER = {"SPRING", "SUMMER", "AUTUMN"};
+
 
     private EditText address_edit;
     private EditText username_edit;
     private EditText passwd_edit;
     private Button submit_button;
     private TextView result_text_view;
+    private Spinner years_spin_box;
+    private Spinner semester_spin_box;
 
     private void getAllViews(){
         address_edit = (EditText) findViewById(R.id.address_edit);
@@ -67,7 +74,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         passwd_edit = (EditText) findViewById(R.id.passwd_edit);
         submit_button = (Button) findViewById(R.id.submit_button);
         result_text_view = (TextView) findViewById(R.id.result_text_view);
+        years_spin_box = (Spinner) findViewById(R.id.year_spin_box);
+        semester_spin_box = (Spinner) findViewById(R.id.semester_spin_box);
+    }
 
+    private void setupViews(){
+        ArrayAdapter<String> years = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, YEARS);
+        ArrayAdapter<String> semesters = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, SEMESTER);
+        years_spin_box.setAdapter(years);
+        semester_spin_box.setAdapter(semesters);
+        years_spin_box.setSelection(3);     // 2015-2016
+        semester_spin_box.setSelection(2);  // AUTUMN
     }
 
     @Override
@@ -86,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
         getAllViews();
+        setupViews();
         submit_button.setOnClickListener(this);
 
 
@@ -115,37 +133,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        // 先判断有无之前保存的文件
-        String username = username_edit.getText().toString();
-        String requestURL = address_edit.getText().toString();
-        PostEvent postEvent = new PostEvent(result_text_view, requestURL);
-
-        try {
-            FileInputStream inStream = openFileInput(username);
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int length= -1 ;
-            while((length=inStream.read(buffer))!=-1)   {
-                stream.write(buffer,0,length);  // 写入字节流中
-            }
-            stream.close();
-            inStream.close();
-            String json_data = stream.toString();
-            postEvent.display(json_data);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         if (v.getId() == R.id.submit_button) {
 
+            String username = username_edit.getText().toString();
+            String requestURL = address_edit.getText().toString();
+            PostEvent postEvent = new PostEvent(result_text_view, requestURL);
+            // 先判断有无之前保存的文件
+            try {
+                String filename = username + "_" + MainActivity.this.years_spin_box.getSelectedItem().toString() + "_"
+                        + MainActivity.this.semester_spin_box.getSelectedItem().toString();
+                FileInputStream inStream = openFileInput(filename);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int length= -1 ;
+                while((length=inStream.read(buffer))!=-1)   {
+                    stream.write(buffer,0,length);  // 写入字节流中
+                }
+                stream.close();
+                inStream.close();
+                String json_data = stream.toString();
+                postEvent.display(json_data);
+                return;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
             String passwd = passwd_edit.getText().toString();
+            String years = years_spin_box.getSelectedItem().toString();
+            String semester = semester_spin_box.getSelectedItem().toString();
+//            {"SPRING", "SUMMER", "AUTUMN"}
+            if (semester.equals("SPRING"))
+                semester = "2";
+            else if (semester.equals("SUMMER"))
+                semester = "3";
+            else if (semester.equals("AUTUMN"))
+                semester = "1";
+
             HashMap<String, String> postData = new HashMap<String, String>();
             postData.put("username", username);
             postData.put("password", passwd);
             postData.put("submit", "query");
-
+            postData.put("years", years);
+            postData.put("semester", semester);
             Log.d(TAG, "onClick");
             postEvent.execute(postData);
         }
@@ -245,10 +278,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mAdapter = new MyAdapter(objs);
                     mRecyclerView.setAdapter(mAdapter);
 
-                    // 保存文件
+                    // 保存文件 命名格式: name_years_semester
                     String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
+                    String filename = username + "_" + MainActivity.this.years_spin_box.getSelectedItem().toString() + "_"
+                            + MainActivity.this.semester_spin_box.getSelectedItem().toString();
                     try{
-                        FileOutputStream out = openFileOutput(username, Context.MODE_PRIVATE);
+                        FileOutputStream out = openFileOutput(filename, Context.MODE_PRIVATE);
                         out.write(response.getBytes("UTF-8"));
                         out.flush();
                         out.close();
@@ -328,6 +363,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (!class_time.equals(EMPTY_CLASS_STRING)){
                                 // 添加到obj数组中
                                 int offset = Integer.parseInt( key.substring(1));   // 得到 w1 中的数字部分
+                                if (offset == 0)
+                                    offset = 7;     // 因为web api返回的数据 w0 是代表周日
                                 boolean hasBeenAdded = false;
                                 for(int count = 0 ; count < class_time.length() ; ++count){
 
