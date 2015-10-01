@@ -48,9 +48,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.mTextView.setText(mDataset[position].toString());
-//        holder.mTextView.scro
-//        holder.mTextView.setMaxLines(2);
-//        holder.mTextView.set
         holder.mTextView.setTextSize(6);
 
     }

@@ -6,7 +6,7 @@
 
     <EditText
         android:id="@+id/address_edit"
-        android:text="http://10.22.27.88:5000"
+        android:text="http://10.22.27.88:5000/syllabus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
