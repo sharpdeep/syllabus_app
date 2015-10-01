@@ -1,6 +1,7 @@
 package com.example.stu_nwad.syllabus;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,7 +19,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.stu_nwad.adapters.ListViewAdapter;
-import com.example.stu_nwad.syllabus.R;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    public static Object[] objects;     // 用于向显示课表的activity传递数据
 
     // 控件及常量
 
@@ -133,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String username = username_edit.getText().toString();
             String requestURL = address_edit.getText().toString();
             SyllabusGetter syllabusGetter = new SyllabusGetter(requestURL);
-            // 先判断有无之前保存的文件
+//             先判断有无之前保存的文件
             try {
                 String filename = username + "_" + MainActivity.this.years_spin_box.getSelectedItem().toString() + "_"
                         + MainActivity.this.semester_spin_box.getSelectedItem().toString();
@@ -213,18 +215,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 if (classParser.parseJSON(response)) {
                     classParser.inflateTable();     // 用数据填充课表
-                    Object [] objs = classParser.objs;
-//                    StringBuilder stringBuilder = new StringBuilder();
-//                    for (int i = 0 ; i < objs.length ; ++i){
-//                        if (objs[i] != null){
-//                            stringBuilder.append(objs[i].toString() + "\n");
-//                        }
-//                    }
-//                    Log.d(TAG, stringBuilder.toString());
+                    MainActivity.objects = classParser.objs;
                     Log.d(TAG, "established adapter");
-                    mAdapter = new MyAdapter(objs);
-                    mRecyclerView.setAdapter(mAdapter);
-
+//                    mAdapter = new MyAdapter(objs);
+//                    mRecyclerView.setAdapter(mAdapter);
+                    Intent syllabus_activity = new Intent(MainActivity.this, SyllabusActivity.class);
+                    startActivity(syllabus_activity);
                     Toast.makeText(MainActivity.this, "读取课表成功哟~~~~正在保存到文件中~~~~", Toast.LENGTH_SHORT).show();
 
                     // 保存文件 命名格式: name_years_semester

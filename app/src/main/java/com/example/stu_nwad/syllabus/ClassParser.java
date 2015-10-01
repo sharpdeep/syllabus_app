@@ -21,7 +21,7 @@ public class ClassParser {
         return all_classes;
     }
 
-    public static final String EMPTY_CLASS_STRING = "NONE";
+    public static final String EMPTY_CLASS_STRING = "";
     public static final String[] LABELS = {"一", "二", "三", "四", "五", "六", "日"};
     public static final String ERROR = "ERROR";
 

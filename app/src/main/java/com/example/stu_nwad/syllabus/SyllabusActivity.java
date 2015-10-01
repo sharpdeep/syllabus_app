@@ -27,14 +27,14 @@ public class SyllabusActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_syllabus);
-
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mLayoutManager = new GridLayoutManager(this, 8, RecyclerView.VERTICAL, false);
         GridLayoutManager gridLayoutManager = (GridLayoutManager) mLayoutManager;
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
-        mAdapter = new MyAdapter( (Object[]) getIntent().getExtras().get("objs"));
+        mAdapter = new MyAdapter(MainActivity.objects);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+
         mRecyclerView.setAdapter(mAdapter);
 
     }
