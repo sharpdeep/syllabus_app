@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">UseRecyclerView</string>
+    <string name="app_name">STU_syllabus</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_syllabus">SyllabusActivity</string>
 </resources>

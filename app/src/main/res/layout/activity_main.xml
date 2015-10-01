@@ -6,30 +6,48 @@
 
     <EditText
         android:id="@+id/address_edit"
-        android:text="http://10.22.27.88:5000/syllabus"
+        android:textSize="15dp"
+        android:editable="true"
+        android:text="http://smallfly2nd.gicp.net:17319/syllabus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/username_edit"
-        android:hint="username"
-        android:text="14xfdeng"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/username_edit"
+                android:hint="username"
+                android:text="14xfdeng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/passwd_edit"
-        android:hint="password"
-        android:text="Smallfly2nd"
-        android:password="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+            <EditText
+                android:id="@+id/passwd_edit"
+                android:hint="password"
+                android:text="Smallfly2nd"
+                android:password="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/submit_button"
-        android:text="Submit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/submit_button"
+            android:text="Submit"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+
 
     <LinearLayout
         android:orientation="horizontal"
@@ -52,14 +70,26 @@
         </Spinner>
     </LinearLayout>
 
+    <ListView
+        android:id="@+id/syllabus_list_view"
+        android:divider="#b0338c"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="true"
+        android:dividerHeight="1dp"
+        android:layout_margin="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
+
     <TextView
-        android:id="@+id/result_text_view"
-        android:scrollbars="vertical"
+        android:gravity="center"
+        android:text="请点击相应学期的课表进行查看!\nEmail: 14xfdeng@stu.edu.cn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/my_recycler_view"
+        android:id="@+id/my_recycler_view_"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

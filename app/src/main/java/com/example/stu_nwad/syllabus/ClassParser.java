@@ -1,4 +1,4 @@
-package com.example.stu_nwad.userecyclerview;
+package com.example.stu_nwad.syllabus;
 
 import android.content.Context;
 import android.util.Log;

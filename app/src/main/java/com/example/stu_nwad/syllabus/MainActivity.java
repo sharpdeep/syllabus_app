@@ -1,4 +1,4 @@
-package com.example.stu_nwad.userecyclerview;
+package com.example.stu_nwad.syllabus;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -13,9 +13,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.stu_nwad.adapters.ListViewAdapter;
+import com.example.stu_nwad.syllabus.R;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -54,18 +57,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText username_edit;
     private EditText passwd_edit;
     private Button submit_button;
-    private TextView result_text_view;
     private Spinner years_spin_box;
     private Spinner semester_spin_box;
+    private ListView syllabus_list_view;
 
     private void getAllViews(){
         address_edit = (EditText) findViewById(R.id.address_edit);
         username_edit = (EditText) findViewById(R.id.username_edit);
         passwd_edit = (EditText) findViewById(R.id.passwd_edit);
         submit_button = (Button) findViewById(R.id.submit_button);
-        result_text_view = (TextView) findViewById(R.id.result_text_view);
+//        result_text_view = (TextView) findViewById(R.id.result_text_view);
         years_spin_box = (Spinner) findViewById(R.id.year_spin_box);
         semester_spin_box = (Spinner) findViewById(R.id.semester_spin_box);
+        syllabus_list_view = (ListView) findViewById(R.id.syllabus_list_view);
     }
 
     private void setupViews(){
@@ -75,13 +79,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         semester_spin_box.setAdapter(semesters);
         years_spin_box.setSelection(3);     // 2015-2016
         semester_spin_box.setSelection(2);  // AUTUMN
+        syllabus_list_view.setAdapter(new ListViewAdapter(this));
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view_);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -209,12 +214,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (classParser.parseJSON(response)) {
                     classParser.inflateTable();     // 用数据填充课表
                     Object [] objs = classParser.objs;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    for (int i = 0 ; i < objs.length ; ++i){
-                        if (objs[i] != null){
-                            stringBuilder.append(objs[i].toString() + "\n");
-                        }
-                    }
+//                    StringBuilder stringBuilder = new StringBuilder();
+//                    for (int i = 0 ; i < objs.length ; ++i){
+//                        if (objs[i] != null){
+//                            stringBuilder.append(objs[i].toString() + "\n");
+//                        }
+//                    }
 //                    Log.d(TAG, stringBuilder.toString());
                     Log.d(TAG, "established adapter");
                     mAdapter = new MyAdapter(objs);
