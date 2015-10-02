@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#d8e0e8"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -8,38 +9,32 @@
         android:id="@+id/address_edit"
         android:textSize="15dp"
         android:editable="true"
+        android:background="@drawable/text_box"
         android:text="http://smallfly2nd.gicp.net:17319/syllabus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
+
             <EditText
                 android:id="@+id/username_edit"
                 android:hint="username"
                 android:text="14xfdeng"
+                android:background="@drawable/text_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <EditText
                 android:id="@+id/passwd_edit"
+                android:background="@drawable/text_box"
                 android:hint="password"
                 android:text="Smallfly2nd"
                 android:password="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-        </LinearLayout>
 
 
-    </LinearLayout>
+
 
     <TextView
         android:id="@+id/help_message"
@@ -51,10 +46,8 @@
 
     <ListView
         android:id="@+id/syllabus_list_view"
-        android:divider="#b0338c"
-        android:footerDividersEnabled="true"
-        android:headerDividersEnabled="true"
-        android:dividerHeight="1dp"
+        android:background="#d8e0e8"
+        android:divider="#0000"
         android:layout_margin="2dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
