@@ -26,7 +26,7 @@ public class SyllabusActivity extends AppCompatActivity {
         mLayoutManager = new GridLayoutManager(this, 6, RecyclerView.VERTICAL, false);  // 不管周末的课程先
         GridLayoutManager gridLayoutManager = (GridLayoutManager) mLayoutManager;
         mRecyclerView.setLayoutManager(gridLayoutManager);
-        mAdapter = new MyAdapter(MainActivity.weekdays_syllabus_data, this);
+        mAdapter = new RecyclerAdapter(MainActivity.weekdays_syllabus_data, this);
         mRecyclerView.setAdapter(mAdapter);
 
         // 显示周末的信息

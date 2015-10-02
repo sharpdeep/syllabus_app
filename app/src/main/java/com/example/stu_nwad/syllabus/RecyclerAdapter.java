@@ -6,12 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Created by STU_nwad on 2015/9/23.
  */
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     private Object[] mDataset;
     private SyllabusActivity syllabusActivity;
 
@@ -29,14 +28,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(Object[] myDataset, SyllabusActivity syllabusActivity) {
+    public RecyclerAdapter(Object[] myDataset, SyllabusActivity syllabusActivity) {
         this.mDataset = myDataset;
         this.syllabusActivity = syllabusActivity;
     }
 
     // Create new views (invoked by the layout manager)
     @Override
-    public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+    public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
@@ -72,7 +71,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(syllabusActivity, "Clicked " + position, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(syllabusActivity, "Clicked " + position, Toast.LENGTH_SHORT).show();
             if (position != -1 && mDataset[position] instanceof Lesson){
                 syllabusActivity.showClassInfo((Lesson) mDataset[position]);
             }
