@@ -28,7 +28,7 @@ public class SyllabusActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_syllabus);
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mLayoutManager = new GridLayoutManager(this, 8, RecyclerView.VERTICAL, false);
+        mLayoutManager = new GridLayoutManager(this, 6, RecyclerView.VERTICAL, false);  // 不管周末的课程先
         GridLayoutManager gridLayoutManager = (GridLayoutManager) mLayoutManager;
         mRecyclerView.setLayoutManager(gridLayoutManager);
 

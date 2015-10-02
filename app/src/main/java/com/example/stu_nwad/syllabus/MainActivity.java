@@ -212,9 +212,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 if (classParser.parseJSON(response)) {
                     classParser.inflateTable();     // 用数据填充课表
-                    MainActivity.objects = classParser.objs;
+                    MainActivity.objects = classParser.syllabus_data;
                     Log.d(TAG, "established adapter");
-//                    mAdapter = new MyAdapter(objs);
+//                    mAdapter = new MyAdapter(syllabus_data);
 //                    mRecyclerView.setAdapter(mAdapter);
                     Intent syllabus_activity = new Intent(MainActivity.this, SyllabusActivity.class);
                     startActivity(syllabus_activity);

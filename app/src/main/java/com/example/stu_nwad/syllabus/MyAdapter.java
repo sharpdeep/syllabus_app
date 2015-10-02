@@ -1,6 +1,7 @@
 package com.example.stu_nwad.syllabus;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +49,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.mTextView.setText(mDataset[position].toString());
-        holder.mTextView.setTextSize(6);
+        holder.mTextView.setTextSize(8);
+        holder.mTextView.setGravity(Gravity.CENTER);
 
     }
 

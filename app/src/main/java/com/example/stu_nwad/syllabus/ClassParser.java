@@ -25,10 +25,13 @@ public class ClassParser {
     public static final String[] LABELS = {"一", "二", "三", "四", "五", "六", "日"};
     public static final String ERROR = "ERROR";
 
-    Object[] objs = new Object[14 * 8];
+    public static final int ROWS = 14;
+    public static final int COLUMNS = 6;    // 包含了 一个 空单元 以及 星期一到星期五
+    Object[] syllabus_data;  // 用于适配 课表的 view 的数据
     private Context context;
 
     public ClassParser(Context context){
+        syllabus_data = new Object[ROWS * COLUMNS];
         all_classes = new ArrayList<>();
         this.context = context;
         init();     // 生成初始化的数据，在特定位置上填上日期信息之类的
@@ -102,27 +105,28 @@ public class ClassParser {
     private void init(){
         Log.d(MainActivity.TAG, "start init()");
 
-        for(int i = 0 ; i < objs.length ; ++i)
-            objs[i] = EMPTY_CLASS_STRING;   // 初始化数据
+        for(int i = 0 ; i < syllabus_data.length ; ++i)
+            syllabus_data[i] = EMPTY_CLASS_STRING;   // 初始化数据
 
         // 处理非课程的数据
-        for (int i = 0 ; i < objs.length ; ++i){
+        for (int i = 0 ; i < syllabus_data.length ; ++i){
             // 处理星期几这些日期
-            if (i <= 7){
+            if (i <= 5){    // 一个空白格子，外加 周一到周五
                 if (i == 0)
-                    objs[i] = "";   // 空白的一个格子
+                    syllabus_data[i] = "";   // 空白的一个格子
                 else
-                    objs[i] = LABELS[i - 1];    // 转化为中文的数字
+                    syllabus_data[i] = LABELS[i - 1];    // 转化为中文的数字
 
-            }else if (i % 8 == 0){
+            }else if (i % COLUMNS == 0){
                 // 处理第一列的 课的节数
-                if (i / 8 <= 9) {   // 这里还是用数字表示
-                    int num = i / 8;
-                    objs[i] = num + "";
+                // 表明目前第i个元素位于 i / COLUMNS 行的第一个位置
+                if (i / COLUMNS <= 9) {   // 这里还是用数字表示
+                    int num = i / COLUMNS;
+                    syllabus_data[i] = num + "";  // i.e. 123..ABC
                 }else{
                     // 用ABC代替
                     String label = "";
-                    switch (i / 8){
+                    switch (i / COLUMNS){
                         case 10:
                             label = "0";
                             break;
@@ -138,18 +142,18 @@ public class ClassParser {
                         default:
                             break;
                     }
-                    objs[i] = label;
+                    syllabus_data[i] = label;
                 }
-            }else{
-                objs[i] = EMPTY_CLASS_STRING; // 置为空
-            }
+            }//else{
+//                syllabus_data[i] = EMPTY_CLASS_STRING; // 置为空
+//            }
         }
         Log.d(MainActivity.TAG, "end init()");
     }
 
 
     /**
-     * 用解析得到的课程填充 objs
+     * 用解析得到的课程填充 syllabus_data
      */
     public void inflateTable(){
         Log.d(MainActivity.TAG, "before inflate class_table");
@@ -164,8 +168,10 @@ public class ClassParser {
                 if (!class_time.equals(EMPTY_CLASS_STRING)){
                     // 添加到obj数组中
                     int offset = Integer.parseInt( key.substring(1));   // 得到 w1 中的数字部分
-                    if (offset == 0)
-                        offset = 7;     // 因为web api返回的数据 w0 是代表周日
+                    if (offset == 0 || offset == 6) {     // 忽略周六周日的课
+//                        offset = 7;     // 因为web api返回的数据 w0 是代表周日
+                        continue;
+                    }
                     boolean hasBeenAdded = false;
                     for(int count = 0 ; count < class_time.length() ; ++count){
 
@@ -192,14 +198,14 @@ public class ClassParser {
                                 row = c - '0';
                                 break;
                         }
-                        int index = row * 8 + offset;
+                        int index = row * COLUMNS + offset;
                         if (row == -1)   // 说明是单双周的情况
                             continue;
                         if (!hasBeenAdded) {     // 一节课添加一次即可
-                            objs[index] = lesson;   // 将这节课添加到合适的位置
+                            syllabus_data[index] = lesson;   // 将这节课添加到合适的位置
                             hasBeenAdded = true;
                         }else{
-                            objs[index] = "同上";
+                            syllabus_data[index] = "同上";
                         }
 
                     }

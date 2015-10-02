@@ -11,6 +11,7 @@ public class Lesson {
     public String teacher;
     public String room;
     public String duration;
+    public String credit;
     public HashMap<String, String> days;
 
     @Override
