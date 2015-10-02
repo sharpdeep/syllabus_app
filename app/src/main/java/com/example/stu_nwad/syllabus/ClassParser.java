@@ -27,11 +27,11 @@ public class ClassParser {
 
     public static final int ROWS = 14;
     public static final int COLUMNS = 6;    // 包含了 一个 空单元 以及 星期一到星期五
-    Object[] syllabus_data;  // 用于适配 课表的 view 的数据
+    Object[] weekdays_syllabus_data;  // 用于适配 课表的 view 的数据
     private Context context;
 
     public ClassParser(Context context){
-        syllabus_data = new Object[ROWS * COLUMNS];
+        weekdays_syllabus_data = new Object[ROWS * COLUMNS];
         all_classes = new ArrayList<>();
         this.context = context;
         init();     // 生成初始化的数据，在特定位置上填上日期信息之类的
@@ -105,24 +105,24 @@ public class ClassParser {
     private void init(){
         Log.d(MainActivity.TAG, "start init()");
 
-        for(int i = 0 ; i < syllabus_data.length ; ++i)
-            syllabus_data[i] = EMPTY_CLASS_STRING;   // 初始化数据
+        for(int i = 0 ; i < weekdays_syllabus_data.length ; ++i)
+            weekdays_syllabus_data[i] = EMPTY_CLASS_STRING;   // 初始化数据
 
         // 处理非课程的数据
-        for (int i = 0 ; i < syllabus_data.length ; ++i){
+        for (int i = 0 ; i < weekdays_syllabus_data.length ; ++i){
             // 处理星期几这些日期
             if (i <= 5){    // 一个空白格子，外加 周一到周五
                 if (i == 0)
-                    syllabus_data[i] = "";   // 空白的一个格子
+                    weekdays_syllabus_data[i] = "";   // 空白的一个格子
                 else
-                    syllabus_data[i] = LABELS[i - 1];    // 转化为中文的数字
+                    weekdays_syllabus_data[i] = LABELS[i - 1];    // 转化为中文的数字
 
             }else if (i % COLUMNS == 0){
                 // 处理第一列的 课的节数
                 // 表明目前第i个元素位于 i / COLUMNS 行的第一个位置
                 if (i / COLUMNS <= 9) {   // 这里还是用数字表示
                     int num = i / COLUMNS;
-                    syllabus_data[i] = num + "";  // i.e. 123..ABC
+                    weekdays_syllabus_data[i] = num + "";  // i.e. 123..ABC
                 }else{
                     // 用ABC代替
                     String label = "";
@@ -142,10 +142,10 @@ public class ClassParser {
                         default:
                             break;
                     }
-                    syllabus_data[i] = label;
+                    weekdays_syllabus_data[i] = label;
                 }
             }//else{
-//                syllabus_data[i] = EMPTY_CLASS_STRING; // 置为空
+//                weekdays_syllabus_data[i] = EMPTY_CLASS_STRING; // 置为空
 //            }
         }
         Log.d(MainActivity.TAG, "end init()");
@@ -153,7 +153,7 @@ public class ClassParser {
 
 
     /**
-     * 用解析得到的课程填充 syllabus_data
+     * 用解析得到的课程填充 weekdays_syllabus_data
      */
     public void inflateTable(){
         Log.d(MainActivity.TAG, "before inflate class_table");
@@ -202,10 +202,10 @@ public class ClassParser {
                         if (row == -1)   // 说明是单双周的情况
                             continue;
                         if (!hasBeenAdded) {     // 一节课添加一次即可
-                            syllabus_data[index] = lesson;   // 将这节课添加到合适的位置
+                            weekdays_syllabus_data[index] = lesson;   // 将这节课添加到合适的位置
                             hasBeenAdded = true;
                         }else{
-                            syllabus_data[index] = "同上";
+                            weekdays_syllabus_data[index] = "同上";
                         }
 
                     }
