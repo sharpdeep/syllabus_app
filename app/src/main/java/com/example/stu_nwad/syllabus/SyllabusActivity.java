@@ -6,36 +6,41 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
-import com.example.stu_nwad.syllabus.R;
 
 public class SyllabusActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private TextView weekend_text;
 
-//    public SyllabusActivity(){
-//        super();
-//    }
+    private void setupViews(){
+        // 设置 RecyclerView
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mLayoutManager = new GridLayoutManager(this, 6, RecyclerView.VERTICAL, false);  // 不管周末的课程先
+        GridLayoutManager gridLayoutManager = (GridLayoutManager) mLayoutManager;
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mAdapter = new MyAdapter(MainActivity.weekdays_syllabus_data);
+        mRecyclerView.setAdapter(mAdapter);
 
-//    public SyllabusActivity(RecyclerView.Adapter mAdapter){
-//        super();
-//        this.mAdapter = mAdapter;
-//    }
+        // 显示周末的信息
+        weekend_text = (TextView) findViewById(R.id.weekend_syllabus_text);
+        String text = "";
+        if (MainActivity.weekends_syllabus_data.size() != 0){
+            for(Lesson lesson : MainActivity.weekends_syllabus_data)
+                text += lesson.representation() + "\n";
+        }else{
+            text = "周末没课哟，出去浪吧~~~~";
+        }
+        weekend_text.setText(text);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_syllabus);
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mLayoutManager = new GridLayoutManager(this, 6, RecyclerView.VERTICAL, false);  // 不管周末的课程先
-        GridLayoutManager gridLayoutManager = (GridLayoutManager) mLayoutManager;
-        mRecyclerView.setLayoutManager(gridLayoutManager);
-
-        mAdapter = new MyAdapter(MainActivity.objects);
-
-
-        mRecyclerView.setAdapter(mAdapter);
+        setupViews();
 
     }
 

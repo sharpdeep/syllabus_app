@@ -16,10 +16,7 @@ import java.util.HashMap;
 public class ClassParser {
 
     private ArrayList<Lesson> all_classes;
-
-    public ArrayList<Lesson> getAllClasses(){
-        return all_classes;
-    }
+    public ArrayList<Lesson> weekend_classes;  // 存放周末的课程
 
     public static final String EMPTY_CLASS_STRING = "";
     public static final String[] LABELS = {"一", "二", "三", "四", "五", "六", "日"};
@@ -28,11 +25,13 @@ public class ClassParser {
     public static final int ROWS = 14;
     public static final int COLUMNS = 6;    // 包含了 一个 空单元 以及 星期一到星期五
     Object[] weekdays_syllabus_data;  // 用于适配 课表的 view 的数据
+
     private Context context;
 
     public ClassParser(Context context){
         weekdays_syllabus_data = new Object[ROWS * COLUMNS];
         all_classes = new ArrayList<>();
+        weekend_classes = new ArrayList<>();
         this.context = context;
         init();     // 生成初始化的数据，在特定位置上填上日期信息之类的
     }
@@ -170,6 +169,7 @@ public class ClassParser {
                     int offset = Integer.parseInt( key.substring(1));   // 得到 w1 中的数字部分
                     if (offset == 0 || offset == 6) {     // 忽略周六周日的课
 //                        offset = 7;     // 因为web api返回的数据 w0 是代表周日
+                        weekend_classes.add(all_classes.get(i));    // 添加周末的课程到此
                         continue;
                     }
                     boolean hasBeenAdded = false;

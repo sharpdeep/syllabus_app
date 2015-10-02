@@ -17,19 +17,22 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.stu_nwad.adapters.ListViewAdapter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    public static Object[] objects;     // 用于向显示课表的activity传递数据
+    public static Object[] weekdays_syllabus_data;     // 用于向显示课表的activity传递数据
+    public static ArrayList<Lesson> weekends_syllabus_data;
 
     // 控件及常量
     public static final String TAG = "POSTTEST";
@@ -113,14 +116,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    private void submit(){
+    private void submit(int position, int view_id){
         String username = username_edit.getText().toString();
         String requestURL = address_edit.getText().toString();
         SyllabusGetter syllabusGetter = new SyllabusGetter(requestURL);
-//             先判断有无之前保存的文件
+
+        String years = YEARS[position];  // 点击到列表的哪一项
+        String semester = null;
+        switch (view_id){
+            case R.id.spring_text_view:
+                semester = "SPRING";
+                break;
+            case R.id.summer_text_view:
+                semester = "SUMMER";
+                break;
+            case R.id.autumn_text_view:
+                semester = "AUTUMN";
+                break;
+            default:
+                Log.d(TAG, "maybe ther is a typo in submit(int, int)");
+                break;
+        }
+        // 先判断有无之前保存的文件
         try {
-            String filename = username + "_" + MainActivity.this.years_spin_box.getSelectedItem().toString() + "_"
-                    + MainActivity.this.semester_spin_box.getSelectedItem().toString();
+            String filename = username + "_" + years + "_"
+                    + semester;
             FileInputStream inStream = openFileInput(filename);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
@@ -132,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             inStream.close();
             String json_data = stream.toString();
             syllabusGetter.display(json_data);
+            Toast.makeText(MainActivity.this, "之前缓存的数据呢~~~", Toast.LENGTH_SHORT).show();
             return;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -142,8 +163,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         String passwd = passwd_edit.getText().toString();
-        String years = years_spin_box.getSelectedItem().toString();
-        String semester = semester_spin_box.getSelectedItem().toString();
 //            {"SPRING", "SUMMER", "AUTUMN"}
         if (semester.equals("SPRING"))
             semester = "2";
@@ -162,16 +181,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         syllabusGetter.execute(postData);
     }
 
-    private void show_syllabus(View v){
-        Toast.makeText(MainActivity.this, ((TextView) v).getText(), Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
             case R.id.submit_button:
-                submit();
+                Toast.makeText(MainActivity.this, "请点击下面列出来的课程表进行查看课表", Toast.LENGTH_SHORT).show();
             default:
                 break;
         }
@@ -192,7 +207,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(MainActivity.this, position + ((TextView) v).getText().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "正在获取 " + YEARS[position] + " " + ((TextView)v).getText().toString(), Toast.LENGTH_SHORT).show();
+            submit(position, v.getId());
         }
     }
 
@@ -229,7 +245,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 if (classParser.parseJSON(response)) {
                     classParser.inflateTable();     // 用数据填充课表
-                    MainActivity.objects = classParser.weekdays_syllabus_data;
+                    MainActivity.weekdays_syllabus_data = classParser.weekdays_syllabus_data;
+                    MainActivity.weekends_syllabus_data = classParser.weekend_classes;
                     Log.d(TAG, "established adapter");
                     Intent syllabus_activity = new Intent(MainActivity.this, SyllabusActivity.class);
                     startActivity(syllabus_activity);

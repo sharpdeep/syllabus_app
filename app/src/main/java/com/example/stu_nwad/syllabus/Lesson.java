@@ -23,4 +23,9 @@ public class Lesson {
         }
         return name + "[" + room + "]" /* + days.toString() */;
     }
+
+    // 返回表示课程的字符串呢
+    public String representation(){
+        return name + "@" + room + ": " + days.toString();
+    }
 }
