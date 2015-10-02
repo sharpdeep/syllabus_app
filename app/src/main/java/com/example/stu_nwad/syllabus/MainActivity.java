@@ -33,6 +33,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     public static Object[] weekdays_syllabus_data;     // 用于向显示课表的activity传递数据
     public static ArrayList<Lesson> weekends_syllabus_data;
+    public static String info_about_syllabus;
 
     // 控件及常量
     public static final String TAG = "POSTTEST";
@@ -143,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d(TAG, "maybe ther is a typo in submit(int, int)");
                 break;
         }
+        info_about_syllabus = years + " " + semester;
         // 先判断有无之前保存的文件
         try {
             String filename = username + "_" + years + "_"
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             inStream.close();
             String json_data = stream.toString();
             syllabusGetter.display(json_data);
-            Toast.makeText(MainActivity.this, "之前缓存的数据呢~~~", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, "之前缓存的数据呢~~~", Toast.LENGTH_SHORT).show();
             return;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -256,14 +258,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d(TAG, "established adapter");
                     Intent syllabus_activity = new Intent(MainActivity.this, SyllabusActivity.class);
                     startActivity(syllabus_activity);
-                    Toast.makeText(MainActivity.this, "读取课表成功哟~~~~", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "读取课表成功哟~~~~", Toast.LENGTH_SHORT).show();
 
                     // 保存文件 命名格式: name_years_semester
                     String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
                     String filename = username + "_" + YEARS[position] + "_"
                             + semester;
                     try{
-                        Toast.makeText(MainActivity.this, filename, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(MainActivity.this, filename, Toast.LENGTH_SHORT).show();
                         FileOutputStream out = openFileOutput(filename, Context.MODE_PRIVATE);
                         out.write(response.getBytes("UTF-8"));
                         out.flush();

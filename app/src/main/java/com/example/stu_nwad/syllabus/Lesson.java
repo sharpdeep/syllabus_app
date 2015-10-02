@@ -29,8 +29,8 @@ public class Lesson {
         return "课程名: " + name + "\n教师: " + teacher + "\n" + "教室: " + room + "\n" + "上课周数: " + duration + "\n学分: " + credit;
     }
 
-    // 返回表示课程的字符串呢
+    // 主要用于显示周末课程时候的表达呢
     public String toText(){
-        return name + "@" + room + ": " + days.toString();
+        return name + "(学分)" + credit + "(" + teacher + ")@" + room + ": " + days.toString();
     }
 }

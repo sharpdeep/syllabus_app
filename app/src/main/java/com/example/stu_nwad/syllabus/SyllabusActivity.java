@@ -16,6 +16,7 @@ public class SyllabusActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private TextView weekend_text;
+    private TextView info_text;
 
     private AlertDialog.Builder dialog_builder;
 
@@ -38,6 +39,11 @@ public class SyllabusActivity extends AppCompatActivity {
             text = "周末没课哟，出去浪吧~~~~";
         }
         weekend_text.setText(text);
+
+        // 提示区域
+        info_text = (TextView) findViewById(R.id.message_text);
+        info_text.setText(MainActivity.info_about_syllabus);
+
     }
 
     @Override
