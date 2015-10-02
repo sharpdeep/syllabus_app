@@ -39,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static  String[] YEARS;// = {"2012-2013", "2013-2014", "2014-2015", "2015-2016", "2016-2017", "2017-2018"};
     public static final String[] SEMESTER = {"SPRING", "SUMMER", "AUTUMN"};
 
+    private int position = -1;  // 用于决定保存的文件名
+    private String semester;    // 用于决定保存的文件名
+
 
     private EditText address_edit;  // 服务器地址
     private EditText username_edit;
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Spinner years_spin_box; // 年份选择
     private Spinner semester_spin_box;  // 学期选择
     private ListView syllabus_list_view;    // 用于显示所有课表的listview
+
+
 
     // 产生近count年的年份字符串 2015-2016
     public static String[] generate_years(int count){
@@ -117,12 +122,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void submit(int position, int view_id){
+        this.position = position;
         String username = username_edit.getText().toString();
         String requestURL = address_edit.getText().toString();
         SyllabusGetter syllabusGetter = new SyllabusGetter(requestURL);
 
         String years = YEARS[position];  // 点击到列表的哪一项
-        String semester = null;
+        semester = null;
         switch (view_id){
             case R.id.spring_text_view:
                 semester = "SPRING";
@@ -254,9 +260,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     // 保存文件 命名格式: name_years_semester
                     String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
-                    String filename = username + "_" + MainActivity.this.years_spin_box.getSelectedItem().toString() + "_"
-                            + MainActivity.this.semester_spin_box.getSelectedItem().toString();
+                    String filename = username + "_" + YEARS[position] + "_"
+                            + semester;
                     try{
+                        Toast.makeText(MainActivity.this, filename, Toast.LENGTH_SHORT).show();
                         FileOutputStream out = openFileOutput(filename, Context.MODE_PRIVATE);
                         out.write(response.getBytes("UTF-8"));
                         out.flush();

@@ -72,12 +72,15 @@ public class ClassParser {
                 String duration = lesson.getString("duration");
 //                Log.d(MainActivity.TAG, duration);
 
+                String credit = lesson.getString("credit");
+
                 Lesson cls = new Lesson();
                 cls.name = name;
                 cls.id = id;
                 cls.teacher = teacher;
                 cls.room = room;
                 cls.duration = duration;
+                cls.credit = credit;
 
                 // 得到一周之内要上课的日期以及具体上课时间
                 JSONObject days = lesson.getJSONObject("days");

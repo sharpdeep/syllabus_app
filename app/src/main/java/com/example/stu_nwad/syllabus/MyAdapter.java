@@ -6,12 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by STU_nwad on 2015/9/23.
  */
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private Object[] mDataset;
+    private SyllabusActivity syllabusActivity;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -19,6 +21,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView mTextView;
+
         public ViewHolder(TextView v) {
             super(v);
             mTextView = v;
@@ -26,8 +29,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(Object[] myDataset) {
-        mDataset = myDataset;
+    public MyAdapter(Object[] myDataset, SyllabusActivity syllabusActivity) {
+        this.mDataset = myDataset;
+        this.syllabusActivity = syllabusActivity;
     }
 
     // Create new views (invoked by the layout manager)
@@ -48,10 +52,31 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        if (mDataset[position] instanceof Lesson){
+            holder.mTextView.setOnClickListener(new ClickAndShow(position));
+        }
         holder.mTextView.setText(mDataset[position].toString());
+        holder.mTextView.setClickable(true);
         holder.mTextView.setTextSize(8);
         holder.mTextView.setGravity(Gravity.CENTER);
 
+    }
+
+    class ClickAndShow implements View.OnClickListener{
+
+        private int position = -1;
+
+        public ClickAndShow(int position){
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(syllabusActivity, "Clicked " + position, Toast.LENGTH_SHORT).show();
+            if (position != -1 && mDataset[position] instanceof Lesson){
+                syllabusActivity.showClassInfo((Lesson) mDataset[position]);
+            }
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

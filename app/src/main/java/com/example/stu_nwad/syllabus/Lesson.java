@@ -24,8 +24,13 @@ public class Lesson {
         return name + "[" + room + "]" /* + days.toString() */;
     }
 
-    // 返回表示课程的字符串呢
+    // 用于表现这个课程的完整信息
     public String representation(){
+        return "课程名: " + name + "\n教师: " + teacher + "\n" + "教室: " + room + "\n" + "上课周数: " + duration + "\n学分: " + credit;
+    }
+
+    // 返回表示课程的字符串呢
+    public String toText(){
         return name + "@" + room + ": " + days.toString();
     }
 }

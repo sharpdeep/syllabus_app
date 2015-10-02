@@ -1,5 +1,7 @@
 package com.example.stu_nwad.syllabus;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,13 +17,15 @@ public class SyllabusActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private TextView weekend_text;
 
+    private AlertDialog.Builder dialog_builder;
+
     private void setupViews(){
         // 设置 RecyclerView
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mLayoutManager = new GridLayoutManager(this, 6, RecyclerView.VERTICAL, false);  // 不管周末的课程先
         GridLayoutManager gridLayoutManager = (GridLayoutManager) mLayoutManager;
         mRecyclerView.setLayoutManager(gridLayoutManager);
-        mAdapter = new MyAdapter(MainActivity.weekdays_syllabus_data);
+        mAdapter = new MyAdapter(MainActivity.weekdays_syllabus_data, this);
         mRecyclerView.setAdapter(mAdapter);
 
         // 显示周末的信息
@@ -29,7 +33,7 @@ public class SyllabusActivity extends AppCompatActivity {
         String text = "";
         if (MainActivity.weekends_syllabus_data.size() != 0){
             for(Lesson lesson : MainActivity.weekends_syllabus_data)
-                text += lesson.representation() + "\n";
+                text += lesson.toText() + "\n";
         }else{
             text = "周末没课哟，出去浪吧~~~~";
         }
@@ -40,8 +44,21 @@ public class SyllabusActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_syllabus);
+        dialog_builder = new AlertDialog.Builder(this);
         setupViews();
 
+    }
+
+    public void showClassInfo(Lesson lesson){
+        dialog_builder.setTitle("Information");
+        dialog_builder.setMessage(lesson.representation());
+        dialog_builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog_builder.create().show();
     }
 
     @Override
@@ -65,4 +82,6 @@ public class SyllabusActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
