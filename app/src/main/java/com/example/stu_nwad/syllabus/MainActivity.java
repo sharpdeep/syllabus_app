@@ -17,9 +17,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.example.stu_nwad.adapters.ListViewAdapter;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -186,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
         class SyllabusGetter extends AsyncTask<HashMap<String, String>, Void, String> {
 
-//            private TextView view;
             private String requestURL;
             private ClassParser classParser; // = new ClassParser();
 
@@ -221,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    mRecyclerView.setAdapter(mAdapter);
                     Intent syllabus_activity = new Intent(MainActivity.this, SyllabusActivity.class);
                     startActivity(syllabus_activity);
-                    Toast.makeText(MainActivity.this, "读取课表成功哟~~~~正在保存到文件中~~~~", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "读取课表成功哟~~~~", Toast.LENGTH_SHORT).show();
 
                     // 保存文件 命名格式: name_years_semester
                     String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
@@ -239,8 +236,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-//                }else{
-////                    Toast.makeText(MainActivity.this, "解析json数据失败，请重试一下哟~~~~", Toast.LENGTH_SHORT).show();
+                    // 否则的话就是传进来的json数据无法解析
                 }
             }
 
