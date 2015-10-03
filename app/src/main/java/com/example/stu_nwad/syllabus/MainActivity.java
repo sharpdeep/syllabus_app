@@ -1,27 +1,17 @@
 package com.example.stu_nwad.syllabus;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.stu_nwad.adapters.ListViewAdapter;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -32,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     public static Object[] weekdays_syllabus_data;     // 用于向显示课表的activity传递数据
     public static ArrayList<Lesson> weekends_syllabus_data;
     public static String info_about_syllabus;
+    public static final String USERNAME_FILE = "username.txt";
+    public static final String PASSWORD_FILE = "password.txt";
 
     // 控件及常量
     public static final String TAG = "POSTTEST";
@@ -45,11 +37,17 @@ public class MainActivity extends AppCompatActivity {
     private EditText address_edit;  // 服务器地址
     private EditText username_edit;
     private EditText passwd_edit;
-//    private Button submit_button;
-//    private Spinner years_spin_box; // 年份选择
-//    private Spinner semester_spin_box;  // 学期选择
     private ListView syllabus_list_view;    // 用于显示所有课表的listview
 
+    // 创建主界面
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);  // 加载主布局
+        YEARS = generate_years(4);  // 生成4年的选项
+        getAllViews();
+        setupViews();
+    }
 
 
     // 产生近count年的年份字符串 2015-2016
@@ -68,35 +66,25 @@ public class MainActivity extends AppCompatActivity {
         address_edit = (EditText) findViewById(R.id.address_edit);
         username_edit = (EditText) findViewById(R.id.username_edit);
         passwd_edit = (EditText) findViewById(R.id.passwd_edit);
-//        submit_button = (Button) findViewById(R.id.submit_button);
-//        years_spin_box = (Spinner) findViewById(R.id.year_spin_box);
-//        semester_spin_box = (Spinner) findViewById(R.id.semester_spin_box);
         syllabus_list_view = (ListView) findViewById(R.id.syllabus_list_view);
     }
 
     private void setupViews(){
-        ArrayAdapter<String> years = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, YEARS);
-        ArrayAdapter<String> semesters = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, SEMESTER);
-//        years_spin_box.setAdapter(years);
-//        semester_spin_box.setAdapter(semesters);
-//        years_spin_box.setSelection(0);     // 2015-2016 今明两年咯 哈哈
-//        semester_spin_box.setSelection(2);  // AUTUMN
         ListViewAdapter list_apapter = new ListViewAdapter(this);
-
         syllabus_list_view.setAdapter(list_apapter);
+
+        // 读取用户
+        String[] user = FileOperation.load_user(this, USERNAME_FILE, PASSWORD_FILE);
+        if (user != null){
+            username_edit.setText(user[0]);
+            passwd_edit.setText(user[1]);
+        }else{
+//            Toast.makeText(MainActivity.this, "用户文件不存在哟", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "用户文件不存在");
+        }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);  // 加载主布局
-        YEARS = generate_years(4);  // 生成4年的选项
-        getAllViews();
-        setupViews();
-//        submit_button.setOnClickListener(this);
 
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -105,20 +93,20 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+////        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+////        if (id == R.id.action_settings) {
+////            return true;
+////        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     private void submit(int position, int view_id){
         this.position = position;
@@ -145,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         info_about_syllabus = years + " " + semester;
         // 先判断有无之前保存的文件
         String filename = username + "_" + years + "_" + semester;
-        String json_data = read_from_file(filename);
+        String json_data = FileOperation.read_from_file(MainActivity.this, filename);
         if (json_data != null) {
             syllabusGetter.apply_json(json_data);
             return;
@@ -171,30 +159,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onClick");
         syllabusGetter.execute(postData);
     }
-
-    private String read_from_file(String filename){
-        try {
-            FileInputStream inStream = openFileInput(filename);
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int length= -1 ;
-            while( (length=inStream.read(buffer)) != -1)   {
-                stream.write(buffer, 0, length);  // 写入字节流中
-            }
-            stream.close();
-            inStream.close();
-            String json_data = stream.toString();
-//            Toast.makeText(MainActivity.this, "读取" + filename, Toast.LENGTH_SHORT).show();
-            return json_data;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
 
 
     // 获取内部类的实例
@@ -269,30 +233,15 @@ public class MainActivity extends AppCompatActivity {
                     String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
                     String filename = username + "_" + YEARS[position] + "_"
                             + semester;
-                    if (save_to_file(filename, json_data)){
+                    if (FileOperation.save_to_file(MainActivity.this, filename, json_data)){
 //                        Toast.makeText(MainActivity.this, "成功保存文件 " + filename, Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "saved file " + filename);
                     }
+                    // 保存用户文件
+                    FileOperation.save_user(MainActivity.this, USERNAME_FILE, PASSWORD_FILE, username, passwd_edit.getText().toString());
                 }
             }
 
-            private boolean save_to_file(String filename, String json_data){
-                try{
-                    FileOutputStream out = openFileOutput(filename, Context.MODE_PRIVATE);
-                    out.write(json_data.getBytes("UTF-8"));
-                    out.flush();
-                    out.close();
-                    return true;
-                }catch (FileNotFoundException e){
-                    Log.d(TAG, e.toString());
-                    return false;
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                    return false;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            }
+
         }
 }
