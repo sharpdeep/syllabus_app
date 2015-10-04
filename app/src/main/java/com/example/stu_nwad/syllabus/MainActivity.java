@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);  // 加载主布局
-        YEARS = generate_years(4);  // 生成4年的选项
+        YEARS = generate_years(5);  // 生成5年的选项
         getAllViews();
         setupViews();
     }
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     public static String[] generate_years(int count){
         // 获取当今年份
         int cur_year = Calendar.getInstance().get(Calendar.YEAR);
-        // 生成四年的年份数据
+        // 生成count年的年份数据
         String[] strs = new String[count];
         for(int i = 0 ; i < strs.length ; ++ i){
             strs[i] = (cur_year - i) + "-" + (cur_year - i + 1);
@@ -93,20 +94,39 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-////        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-////        if (id == R.id.action_settings) {
-////            return true;
-////        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+
+        if (id == R.id.delete_action) {
+            delete_cached_files();
+            Toast.makeText(MainActivity.this, "已经清空所有缓存文件", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void delete_cached_files(){
+        String filename = null;
+        String username = username_edit.getText().toString();
+        // 删除全部缓存文件
+        for(int i = 0 ; i < YEARS.length ; ++ i){
+            for(int j = 0 ; j < SEMESTER.length ; ++j){
+                filename = FileOperation.generate_file_name(username, YEARS[i], SEMESTER[j], "_");
+                Log.d(TAG, "deleting " + filename);
+                if (FileOperation.delete_file(this, filename))
+                    Log.d(TAG, "deleted " + filename );
+                else
+                    Log.d(TAG, "delete[failed]" + filename);
+            }
+        }
+    }
 
     private void submit(int position, int view_id){
         this.position = position;
@@ -132,7 +152,8 @@ public class MainActivity extends AppCompatActivity {
         }
         info_about_syllabus = years + " " + semester;
         // 先判断有无之前保存的文件
-        String filename = username + "_" + years + "_" + semester;
+//        String filename = username + "_" + years + "_" + semester;
+        String filename = FileOperation.generate_file_name(username, years, semester, "_");
         String json_data = FileOperation.read_from_file(MainActivity.this, filename);
         if (json_data != null) {
             syllabusGetter.apply_json(json_data);
@@ -231,8 +252,9 @@ public class MainActivity extends AppCompatActivity {
 
                     // 保存文件 命名格式: name_years_semester
                     String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
-                    String filename = username + "_" + YEARS[position] + "_"
-                            + semester;
+//                    String filename = username + "_" + YEARS[position] + "_"
+//                            + semester;
+                    String filename = FileOperation.generate_file_name(username, YEARS[position], semester, "_");
                     if (FileOperation.save_to_file(MainActivity.this, filename, json_data)){
 //                        Toast.makeText(MainActivity.this, "成功保存文件 " + filename, Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "saved file " + filename);

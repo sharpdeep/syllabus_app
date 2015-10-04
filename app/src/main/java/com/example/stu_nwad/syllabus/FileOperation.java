@@ -16,6 +16,10 @@ import java.io.UnsupportedEncodingException;
  */
 public class FileOperation {
 
+    public static String generate_file_name(String username, String year, String semester, String sep){
+        return username + sep + year + sep + semester;
+    }
+
     public static boolean hasFile(File file){
         if (file.exists())
             return true;
@@ -97,4 +101,13 @@ public class FileOperation {
             return null;
         }
     }
+
+    public static boolean delete_file(Context context, String filename){
+        File dir = context.getFilesDir();
+        File file = new File(dir, filename);
+        return file.delete();
+
+    }
+
+
 }

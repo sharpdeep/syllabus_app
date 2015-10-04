@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-
+    android:background="@drawable/wallpaper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -8,6 +8,7 @@
 
     <TextView
         android:id="@+id/message_text"
+        android:textColor="#ffff"
         android:text="提示信息区域:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -15,6 +16,7 @@
     <TextView
         android:id="@+id/weekend_syllabus_text"
         android:text="周末有课的话就会显示在这里哟~"
+        android:textColor="#ffff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

@@ -27,6 +27,7 @@
 
             android:textSize="19sp"
             android:text="春季学期"
+            android:textColor="#ffff"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -42,6 +43,7 @@
 
             android:textSize="19sp"
             android:text="夏季学期"
+            android:textColor="#ffff"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -56,6 +58,7 @@
             android:id="@+id/autumn_text_view"
             android:textSize="19sp"
             android:text="秋季学期"
+            android:textColor="#ffff"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
