@@ -1,16 +1,10 @@
 package com.example.stu_nwad.activities;
-
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.stu_nwad.adapters.RecyclerAdapter;
@@ -24,8 +18,7 @@ public class SyllabusActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private TextView weekend_text;
     private TextView info_text;
-
-    private AlertDialog.Builder dialog_builder;
+    private ClassDialog dialog;
 
     private void setupViews(){
         // 设置 RecyclerView
@@ -49,7 +42,7 @@ public class SyllabusActivity extends AppCompatActivity {
 
         // 提示区域
         info_text = (TextView) findViewById(R.id.message_text);
-        info_text.setText(MainActivity.info_about_syllabus);
+        info_text.setText(MainActivity.info_about_syllabus + " 点击课程可以添加备注信息哟~~");
 
     }
 
@@ -57,13 +50,13 @@ public class SyllabusActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_syllabus);
-        dialog_builder = new AlertDialog.Builder(this);
         setupViews();
 
     }
 
     public void showClassInfo(Lesson lesson){
-        ClassDialog dialog = new ClassDialog(this, R.style.ClassDialog);
+        if (dialog == null)
+            dialog = new ClassDialog(this, R.style.ClassDialog);
         dialog.setLesson(lesson);
         dialog.show();
     }

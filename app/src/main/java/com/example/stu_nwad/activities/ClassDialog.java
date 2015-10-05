@@ -23,7 +23,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
     private TextView class_info_text_view;
     private Button submit_button;
     private EditText comment_area;
-    private String comment;
+    private String comment = "";
 
     private Lesson lesson;
 
@@ -35,11 +35,25 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
     public ClassDialog(Context context, int themeId){
         super(context, themeId);
         this.context = context;
+        setContentView(R.layout.dialog_layout);
+        find_views();
+        submit_button.setOnClickListener(this);
+
     }
 
     public void setLesson(Lesson lesson){
         this.lesson = lesson;
+//        Log.d(MainActivity.TAG, lesson.representation());
+        class_info_text_view.setText(lesson.representation());
+        comment = load_comment();
+        if (comment != null) {
+            comment_area.setText(comment);
+            comment_area.setSelection(comment.length());
+        }else{
+            comment_area.setText("");
+        }
     }
+
 
     private void find_views(){
         class_info_text_view = (TextView) findViewById(R.id.dialog_content);
@@ -47,23 +61,16 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         comment_area = (EditText) findViewById(R.id.dialog_class_comment);
     }
 
-    private void setup_views(){
-        class_info_text_view.setText(lesson.representation());
-        submit_button.setOnClickListener(this);
-        comment = load_comment();
-        if (comment != null) {
-            comment_area.setText(comment);
-            comment_area.setSelection(comment.length());
-        }
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_layout);
-        find_views();
-        setup_views();
+    }
+
+    @Override
+    public void show(){
+        // show 之后才调用 onCreate的
+        super.show();
     }
 
     private boolean save_comment(){
@@ -83,6 +90,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         String info = MainActivity.info_about_syllabus;
         String username = info.split(" ")[0];
         String filename = FileOperation.generate_class_file_name(username, lesson.id, "_");
+        Log.d(MainActivity.TAG, "loading " + filename);
         return FileOperation.read_from_file(context, filename);
     }
 
