@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.stu_nwad.syllabus.SyllabusActivity">
+    tools:context="com.example.stu_nwad.activities.SyllabusActivity">
 
     <TextView
         android:id="@+id/message_text"

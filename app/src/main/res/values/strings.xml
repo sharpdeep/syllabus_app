@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">汕大课程表</string>
     <string name="title_activity_syllabus">课程表</string>
-    <string name="help_message">点击下面相应学期查看课表</string>
+    <string name="help_message">输入账号密码之后直接点击下面的学期即可查看课表</string>
     <string name="about_message">Email: 14xfdeng@stu.edu.cn</string>
 </resources>

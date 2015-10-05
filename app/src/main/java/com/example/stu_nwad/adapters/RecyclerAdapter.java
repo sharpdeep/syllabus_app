@@ -1,4 +1,4 @@
-package com.example.stu_nwad.syllabus;
+package com.example.stu_nwad.adapters;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.stu_nwad.syllabus.Lesson;
+import com.example.stu_nwad.activities.SyllabusActivity;
 
 /**
  * Created by STU_nwad on 2015/9/23.

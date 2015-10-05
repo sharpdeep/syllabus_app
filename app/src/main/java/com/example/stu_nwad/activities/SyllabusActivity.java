@@ -1,6 +1,7 @@
-package com.example.stu_nwad.syllabus;
+package com.example.stu_nwad.activities;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,7 +9,13 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.stu_nwad.adapters.RecyclerAdapter;
+import com.example.stu_nwad.syllabus.Lesson;
+import com.example.stu_nwad.syllabus.R;
 
 
 public class SyllabusActivity extends AppCompatActivity {
@@ -56,15 +63,9 @@ public class SyllabusActivity extends AppCompatActivity {
     }
 
     public void showClassInfo(Lesson lesson){
-        dialog_builder.setTitle("Information");
-        dialog_builder.setMessage(lesson.representation());
-        dialog_builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        dialog_builder.create().show();
+        ClassDialog dialog = new ClassDialog(this, R.style.ClassDialog);
+        dialog.setLesson(lesson);
+        dialog.show();
     }
 
     @Override
@@ -76,15 +77,6 @@ public class SyllabusActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
 
         return super.onOptionsItemSelected(item);
     }

@@ -1,5 +1,8 @@
 package com.example.stu_nwad.syllabus;
 import android.util.Log;
+
+import com.example.stu_nwad.activities.MainActivity;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;

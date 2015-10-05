@@ -3,6 +3,8 @@ package com.example.stu_nwad.syllabus;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.stu_nwad.activities.MainActivity;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,8 +18,12 @@ import java.io.UnsupportedEncodingException;
  */
 public class FileOperation {
 
-    public static String generate_file_name(String username, String year, String semester, String sep){
+    public static String generate_syllabus_file_name(String username, String year, String semester, String sep){
         return username + sep + year + sep + semester;
+    }
+
+    public static String generate_class_file_name(String username, String class_id, String sep){
+        return username + sep + class_id;
     }
 
     public static boolean hasFile(File file){
@@ -62,6 +68,7 @@ public class FileOperation {
 
     public static boolean save_to_file(Context context, String filename, String data){
         try{
+            Log.d(MainActivity.TAG, "saving " + filename);
             FileOutputStream out = context.openFileOutput(filename, Context.MODE_PRIVATE);
             out.write(data.getBytes("UTF-8"));
             out.flush();

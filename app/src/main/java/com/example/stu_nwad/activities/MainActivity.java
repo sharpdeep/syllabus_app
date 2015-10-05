@@ -1,4 +1,4 @@
-package com.example.stu_nwad.syllabus;
+package com.example.stu_nwad.activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -13,6 +13,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.stu_nwad.adapters.ListViewAdapter;
+import com.example.stu_nwad.syllabus.ClassParser;
+import com.example.stu_nwad.syllabus.FileOperation;
+import com.example.stu_nwad.syllabus.HttpCommunication;
+import com.example.stu_nwad.syllabus.Lesson;
+import com.example.stu_nwad.syllabus.R;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -118,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         // 删除全部缓存文件
         for(int i = 0 ; i < YEARS.length ; ++ i){
             for(int j = 0 ; j < SEMESTER.length ; ++j){
-                filename = FileOperation.generate_file_name(username, YEARS[i], SEMESTER[j], "_");
+                filename = FileOperation.generate_syllabus_file_name(username, YEARS[i], SEMESTER[j], "_");
                 Log.d(TAG, "deleting " + filename);
                 if (FileOperation.delete_file(this, filename))
                     Log.d(TAG, "deleted " + filename );
@@ -150,10 +156,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "maybe there is a typo in submit(int, int)");
                 break;
         }
-        info_about_syllabus = years + " " + semester;
+        info_about_syllabus = username + " " + years + " " + semester;
         // 先判断有无之前保存的文件
 //        String filename = username + "_" + years + "_" + semester;
-        String filename = FileOperation.generate_file_name(username, years, semester, "_");
+        String filename = FileOperation.generate_syllabus_file_name(username, years, semester, "_");
         String json_data = FileOperation.read_from_file(MainActivity.this, filename);
         if (json_data != null) {
             syllabusGetter.apply_json(json_data);
@@ -254,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                     String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
 //                    String filename = username + "_" + YEARS[position] + "_"
 //                            + semester;
-                    String filename = FileOperation.generate_file_name(username, YEARS[position], semester, "_");
+                    String filename = FileOperation.generate_syllabus_file_name(username, YEARS[position], semester, "_");
                     if (FileOperation.save_to_file(MainActivity.this, filename, json_data)){
 //                        Toast.makeText(MainActivity.this, "成功保存文件 " + filename, Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "saved file " + filename);

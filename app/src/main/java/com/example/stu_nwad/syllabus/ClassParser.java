@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.stu_nwad.activities.MainActivity;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +26,7 @@ public class ClassParser {
 
     public static final int ROWS = 14;
     public static final int COLUMNS = 6;    // 包含了 一个 空单元 以及 星期一到星期五
-    Object[] weekdays_syllabus_data;  // 用于适配 课表的 view 的数据
+    public Object[] weekdays_syllabus_data;  // 用于适配 课表的 view 的数据
 
     private Context context;
 

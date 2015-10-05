@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.stu_nwad.syllabus.MainActivity;
+import com.example.stu_nwad.activities.MainActivity;
 import com.example.stu_nwad.syllabus.R;
 
 /**
