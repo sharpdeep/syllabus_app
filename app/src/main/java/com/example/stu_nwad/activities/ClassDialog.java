@@ -40,26 +40,10 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         this.context = context;
     }
 
-    public ClassDialog(Context context, int themeId){
+    public ClassDialog(Context context, int themeId, Lesson lesson){
         super(context, themeId);
         this.context = context;
-        setContentView(R.layout.dialog_layout);
-        tabHost = (TabHost) findViewById(android.R.id.tabhost);
-        tabHost.setup();
-
-        personal_tab_content = tabHost.newTabSpec("personal").setIndicator("个人").setContent(R.id.personal_layout);
-        tabHost.addTab(personal_tab_content);
-
-        homework_tab_content = tabHost.newTabSpec("homework").setIndicator("作业").setContent(R.id.homework_layout);
-        tabHost.addTab(homework_tab_content);
-
-        discuss_tab_content = tabHost.newTabSpec("discuss").setIndicator("吹水").setContent(R.id.talk_layout);
-        tabHost.addTab(discuss_tab_content);
-
-        find_views();
-        submit_button.setOnClickListener(this);
-
-
+        this.lesson = lesson;
 
     }
 
@@ -83,10 +67,34 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         comment_area = (EditText) tabHost.findViewById(R.id.personal_note);
     }
 
+    private void setup_views(){
+
+        setContentView(R.layout.dialog_layout);
+
+        tabHost = (TabHost) findViewById(android.R.id.tabhost);
+        tabHost.setup();
+
+        personal_tab_content = tabHost.newTabSpec("personal").setIndicator("个人").setContent(R.id.personal_layout);
+        tabHost.addTab(personal_tab_content);
+
+        homework_tab_content = tabHost.newTabSpec("homework").setIndicator("作业").setContent(R.id.homework_layout);
+        tabHost.addTab(homework_tab_content);
+
+        discuss_tab_content = tabHost.newTabSpec("discuss").setIndicator("吹水").setContent(R.id.talk_layout);
+        tabHost.addTab(discuss_tab_content);
+
+        find_views();
+
+        // add listeners
+        submit_button.setOnClickListener(this);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        setup_views();
+        setLesson(lesson);
 
     }
 

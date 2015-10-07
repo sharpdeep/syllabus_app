@@ -56,8 +56,10 @@ public class SyllabusActivity extends AppCompatActivity {
 
     public void showClassInfo(Lesson lesson){
         if (dialog == null)
-            dialog = new ClassDialog(this, R.style.ClassDialog);
-        dialog.setLesson(lesson);
+            dialog = new ClassDialog(this, R.style.ClassDialog, lesson);
+        else
+            dialog.setLesson(lesson);
+
         dialog.show();
     }
 
