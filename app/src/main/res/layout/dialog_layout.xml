@@ -5,26 +5,16 @@
 
 
     <TextView
+        android:layout_marginLeft="2dp"
         android:id="@+id/dialog_content"
         android:layout_margin="5dp"
         android:hint="具体的课程信息"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/dialog_class_comment"
-        android:layout_margin="5dp"
-        android:hint="在这里写下课程的备注哟~~~~"
-        android:background="@drawable/text_box"
-        android:inputType="textMultiLine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <include layout="@layout/tab_host_layout" />
 
-    <Button
-        android:id="@+id/dialog_submit_button"
-        android:text="提交"
-        android:background="@drawable/text_box"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+
+
 
 </LinearLayout>

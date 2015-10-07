@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.example.stu_nwad.syllabus.FileOperation;
@@ -25,6 +26,13 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
     private EditText comment_area;
     private String comment = "";
 
+    private TabHost tabHost;
+    private TabHost.TabSpec personal_tab_content;
+    private TabHost.TabSpec homework_tab_content;
+    private TabHost.TabSpec discuss_tab_content;
+
+
+
     private Lesson lesson;
 
     public ClassDialog(Context context) {
@@ -36,8 +44,22 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         super(context, themeId);
         this.context = context;
         setContentView(R.layout.dialog_layout);
+        tabHost = (TabHost) findViewById(android.R.id.tabhost);
+        tabHost.setup();
+
+        personal_tab_content = tabHost.newTabSpec("personal").setIndicator("个人").setContent(R.id.personal_layout);
+        tabHost.addTab(personal_tab_content);
+
+        homework_tab_content = tabHost.newTabSpec("homework").setIndicator("作业").setContent(R.id.homework_layout);
+        tabHost.addTab(homework_tab_content);
+
+        discuss_tab_content = tabHost.newTabSpec("discuss").setIndicator("吹水").setContent(R.id.talk_layout);
+        tabHost.addTab(discuss_tab_content);
+
         find_views();
         submit_button.setOnClickListener(this);
+
+
 
     }
 
@@ -57,14 +79,15 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
 
     private void find_views(){
         class_info_text_view = (TextView) findViewById(R.id.dialog_content);
-        submit_button = (Button) findViewById(R.id.dialog_submit_button);
-        comment_area = (EditText) findViewById(R.id.dialog_class_comment);
+        submit_button = (Button) tabHost.findViewById(R.id.personal_submit);
+        comment_area = (EditText) tabHost.findViewById(R.id.personal_note);
     }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
     }
 
     @Override

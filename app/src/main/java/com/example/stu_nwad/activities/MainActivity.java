@@ -89,6 +89,16 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(MainActivity.this, "用户文件不存在哟", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "用户文件不存在");
         }
+
+        // debug
+        TextView about_text = (TextView) findViewById(R.id.about_text_box);
+        about_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent tab = new Intent(MainActivity.this, MyTabActivity.class);
+                startActivity(tab);
+            }
+        });
     }
 
 

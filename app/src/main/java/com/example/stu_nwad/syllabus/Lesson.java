@@ -18,15 +18,16 @@ public class Lesson {
     public String toString(){
         // 去掉课程的[课程号]
         int s_index = name.indexOf(']');
+        String name_without_prefix = name;
         if (s_index != -1){
-            name = name.substring(s_index + 1);
+            name_without_prefix = name.substring(s_index + 1);
         }
-        return name + "[" + room + "]" /* + days.toString() */;
+        return name_without_prefix + "[" + room + "]" /* + days.toString() */;
     }
 
     // 用于表现这个课程的完整信息
     public String representation(){
-        return "课程名: " + name + "\n教师: " + teacher + "\n" + "教室: " + room + "\n" + "上课周数: " + duration + "\n学分: " + credit;
+        return  "班号:" + id + "\n课程名: " + name + "\n教师: " + teacher + "\n" + "教室: " + room + "\n" + "上课周数: " + duration + "\n学分: " + credit;
     }
 
     // 主要用于显示周末课程时候的表达呢

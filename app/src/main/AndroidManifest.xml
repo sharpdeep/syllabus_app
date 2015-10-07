@@ -23,6 +23,11 @@
             android:name="com.example.stu_nwad.activities.SyllabusActivity"
             android:label="@string/title_activity_syllabus" >
         </activity>
+
+        <activity android:name="com.example.stu_nwad.activities.MyTabActivity"
+            android:label="各种区域">
+        </activity>
+
     </application>
 
 </manifest>
