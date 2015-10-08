@@ -106,7 +106,7 @@
             android:editable="true"
             android:textColor="#ffff"
             android:gravity="center"
-            android:text="http://smallfly2nd.gicp.net:17319/syllabus"
+            android:text="@string/server_address"
             android:hint="服务器地址"
             android:layout_margin="2dp"
             android:layout_width="match_parent"
