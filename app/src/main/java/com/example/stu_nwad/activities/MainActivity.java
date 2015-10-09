@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private String semester;    // 用于决定保存的文件名
 
 
-    private EditText address_edit;  // 服务器地址
+//    private EditText address_edit;  // 服务器地址
     private EditText username_edit;
     private EditText passwd_edit;
     private ListView syllabus_list_view;    // 用于显示所有课表的listview
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getAllViews(){
-        address_edit = (EditText) findViewById(R.id.address_edit);
+//        address_edit = (EditText) findViewById(R.id.address_edit);
         username_edit = (EditText) findViewById(R.id.username_edit);
         passwd_edit = (EditText) findViewById(R.id.passwd_edit);
         syllabus_list_view = (ListView) findViewById(R.id.syllabus_list_view);
@@ -91,14 +91,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // debug
-        TextView about_text = (TextView) findViewById(R.id.about_text_box);
-        about_text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent tab = new Intent(MainActivity.this, MyTabActivity.class);
-                startActivity(tab);
-            }
-        });
+//        TextView about_text = (TextView) findViewById(R.id.about_text_box);
+//        about_text.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent tab = new Intent(MainActivity.this, MyTabActivity.class);
+//                startActivity(tab);
+//            }
+//        });
     }
 
 
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void delete_cached_files(){
-        String filename = null;
+        String filename;
         String username = username_edit.getText().toString();
         // 删除全部缓存文件
         for(int i = 0 ; i < YEARS.length ; ++ i){
@@ -147,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
     private void submit(int position, int view_id){
         this.position = position;
         String username = username_edit.getText().toString();
-        String requestURL = address_edit.getText().toString();
+//        String requestURL = address_edit.getText().toString();
+        String requestURL = this.getString(R.string.server_address);
         SyllabusGetter syllabusGetter = new SyllabusGetter(requestURL);
 
         String years = YEARS[position];  // 点击到列表的哪一项
@@ -187,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         else if (semester.equals("AUTUMN"))
             semester_code = "1";
 
-        HashMap<String, String> postData = new HashMap<String, String>();
+        HashMap<String, String> postData = new HashMap<>();
         postData.put("username", username);
         postData.put("password", passwd);
         postData.put("submit", "query");

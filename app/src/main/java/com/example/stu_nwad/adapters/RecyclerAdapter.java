@@ -60,7 +60,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         }
         holder.mTextView.setText(mDataset[position].toString());
         holder.mTextView.setClickable(true);
-        holder.mTextView.setTextSize(8);
+        holder.mTextView.setTextSize(10);
         holder.mTextView.setTextColor(Color.WHITE);
         holder.mTextView.setGravity(Gravity.CENTER);
 

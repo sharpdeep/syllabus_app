@@ -36,13 +36,13 @@ public class SyllabusActivity extends AppCompatActivity {
             for(Lesson lesson : MainActivity.weekends_syllabus_data)
                 text += lesson.toText() + "\n";
         }else{
-            text = "周末没课哟，出去浪吧~~~~";
+            text = "【周末课程信息】: 周末没有课的说~走起!";
         }
         weekend_text.setText(text);
 
         // 提示区域
         info_text = (TextView) findViewById(R.id.message_text);
-        info_text.setText(MainActivity.info_about_syllabus + " 点击课程可以添加备注信息哟~~");
+        info_text.setText(MainActivity.info_about_syllabus + "\n【点击课程有惊喜哟^_^】");
 
     }
 
