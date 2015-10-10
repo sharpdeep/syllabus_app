@@ -58,7 +58,7 @@ public class ClassParser {
             }
             // 得到所有课程的数组
             JSONArray classes = curriculum.getJSONArray("classes");
-            Log.d(MainActivity.TAG, classes.length() + " classes");
+//            Log.d(MainActivity.TAG, classes.length() + " classes");
             for (int i = 0; i < classes.length(); ++i) {
                 // 得到每一节课
                 JSONObject lesson = (JSONObject) classes.get(i);
@@ -84,6 +84,14 @@ public class ClassParser {
                 cls.duration = duration;
                 cls.credit = credit;
 
+//                Log.d(MainActivity.TAG, duration);
+
+                // 额外信息
+                cls.semester = MainActivity.cur_semester;
+                String[] year_strs = MainActivity.cur_year_string.split("-");
+                cls.start_year = Integer.parseInt(year_strs[0]);
+                cls.end_year = Integer.parseInt(year_strs[1]);
+
                 // 得到一周之内要上课的日期以及具体上课时间
                 JSONObject days = lesson.getJSONObject("days");
                 final int weekdays = 7;
@@ -107,7 +115,7 @@ public class ClassParser {
     }
 
     private void init(){
-        Log.d(MainActivity.TAG, "start init()");
+//        Log.d(MainActivity.TAG, "start init()");
 
         for(int i = 0 ; i < weekdays_syllabus_data.length ; ++i)
             weekdays_syllabus_data[i] = EMPTY_CLASS_STRING;   // 初始化数据
@@ -152,7 +160,7 @@ public class ClassParser {
 //                weekdays_syllabus_data[i] = EMPTY_CLASS_STRING; // 置为空
 //            }
         }
-        Log.d(MainActivity.TAG, "end init()");
+//        Log.d(MainActivity.TAG, "end init()");
     }
 
 
@@ -160,7 +168,7 @@ public class ClassParser {
      * 用解析得到的课程填充 weekdays_syllabus_data
      */
     public void inflateTable(){
-        Log.d(MainActivity.TAG, "before inflate class_table");
+//        Log.d(MainActivity.TAG, "before inflate class_table");
         // 填充课表数据
         for(int i = 0 ; i < all_classes.size() ; ++i){
             // 遍历key set

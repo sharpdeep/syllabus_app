@@ -32,6 +32,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String USERNAME_FILE = "username.txt";
     public static final String PASSWORD_FILE = "password.txt";
 
+    // 用于和其他activity共享的数据
+    public static String cur_year_string;
+    public static int cur_semester;
+    public static String cur_username;
+
     // 控件及常量
     public static final String TAG = "POSTTEST";
     public static  String[] YEARS;// = {"2012-2013", "2013-2014", "2014-2015", "2015-2016", "2016-2017", "2017-2018"};
@@ -147,21 +152,26 @@ public class MainActivity extends AppCompatActivity {
     private void submit(int position, int view_id){
         this.position = position;
         String username = username_edit.getText().toString();
+        cur_username = username;
 //        String requestURL = address_edit.getText().toString();
         String requestURL = this.getString(R.string.server_address);
         SyllabusGetter syllabusGetter = new SyllabusGetter(requestURL);
 
         String years = YEARS[position];  // 点击到列表的哪一项
+        cur_year_string = years;    // 用于共享目的
         semester = null;
         switch (view_id){
             case R.id.spring_text_view:
                 semester = "SPRING";
+                cur_semester = 2;
                 break;
             case R.id.summer_text_view:
                 semester = "SUMMER";
+                cur_semester = 3;
                 break;
             case R.id.autumn_text_view:
                 semester = "AUTUMN";
+                cur_semester = 1;
                 break;
             default:
                 Log.d(TAG, "maybe there is a typo in submit(int, int)");

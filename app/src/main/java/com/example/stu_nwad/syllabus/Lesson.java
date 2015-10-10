@@ -14,6 +14,17 @@ public class Lesson {
     public String credit;
     public HashMap<String, String> days;
 
+    // 额外的信息
+    public int start_year;
+    public int end_year;
+    public int semester;
+
+//    self.class_id = str(start_year) + "_" + str(end_year) + "_" + str(semester) + "_" + self.class_number
+
+    public String generate_class_id(){
+        return start_year + "_" + end_year + "_" + semester + "_" + id;
+    }
+
     @Override
     public String toString(){
         // 去掉课程的[课程号]
@@ -27,7 +38,7 @@ public class Lesson {
 
     // 用于表现这个课程的完整信息
     public String representation(){
-        return  "班号:" + id + "\n课程名: " + name + "\n教师: " + teacher + "\n" + "教室: " + room + "\n" + "上课周数: " + duration + "\n学分: " + credit;
+        return  start_year + "-" + end_year + "\n" + "\n班号:" + id + "\n课程名: " + name + "\n教师: " + teacher + "\n" + "教室: " + room + "\n" + "上课周数: " + duration + "\n学分: " + credit;
     }
 
     // 主要用于显示周末课程时候的表达呢
