@@ -82,6 +82,10 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         }else{
             personal_comment_area.setText("");
         }
+        // 每次设置这个的时候应该把之前的数据先清空
+        homework_content_edit.setText("");
+        homework_time_edit.setText("");
+
         // 当调用这个函数的时候就拉取一次最新的消息
         get_latest_homework(1);
     }
