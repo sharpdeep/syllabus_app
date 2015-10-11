@@ -9,9 +9,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.stu_nwad.adapters.HomeworkAdapter;
+import com.example.stu_nwad.adapters.ListViewAdapter;
 import com.example.stu_nwad.syllabus.Homework;
 import com.example.stu_nwad.syllabus.HomeworkHandler;
 import com.example.stu_nwad.syllabus.HomeworkPullTask;
@@ -25,21 +28,25 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
     public static final String[] HISTORY_TYPES = {"Homework", "Discussion"};
 
     private ArrayAdapter<String> data_adapter;
+    private HomeworkAdapter homeworkAdapter;
 
     private Spinner history_type_spinner;
     private Button query_history_button;
-    private EditText history_content;
+//    private EditText history_content;
     private EditText history_count_edit;
+    private ListView history_list_view;
 
 
     private void find_views(){
         history_type_spinner = (Spinner) findViewById(R.id.history_type_spinner);
         query_history_button = (Button) findViewById(R.id.query_history_button);
-        history_content = (EditText) findViewById(R.id.history_content);
+//        history_content = (EditText) findViewById(R.id.history_content);
         history_count_edit = (EditText) findViewById(R.id.history_count_edit);
+        history_list_view = (ListView) findViewById(R.id.history_list_view);
     }
 
     private void setup_views(){
+        // 设置下拉框
         data_adapter =  new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
                 HISTORY_TYPES);
         history_type_spinner.setAdapter(data_adapter);
@@ -100,6 +107,11 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
         }
         int count = Integer.parseInt(history_count_edit.getText().toString());
 
+        if (count > 50){
+            Toast.makeText(HistoryActivity.this, "数字不能大于50哟~~~", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Homework
         if (history_type_spinner.getSelectedItem().toString().equals(HISTORY_TYPES[0])){
             HomeworkPullTask task = new HomeworkPullTask(this, this);
@@ -111,14 +123,18 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
     @Override
     public void deal_with_homework(ArrayList<Homework> all_homework) {
         if (all_homework == null){
-            history_content.setText("None");
+//            history_content.setText("None");
             Toast.makeText(HistoryActivity.this, "没有作业的历史信息呢", Toast.LENGTH_SHORT).show();
             return ;
         }
-        StringBuilder sb = new StringBuilder();
-        for(Homework homework : all_homework)
-            sb.append(homework.toString() + "\n\n");
-        history_content.setText(sb.toString());
+
+        homeworkAdapter = new HomeworkAdapter(this, R.layout.homework_list_item, all_homework);
+        history_list_view.setAdapter(homeworkAdapter);
+
+//        StringBuilder sb = new StringBuilder();
+//        for(Homework homework : all_homework)
+//            sb.append(homework.toString() + "\n\n");
+//        history_content.setText(sb.toString());
     }
 
     @Override

@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/wallpaper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.stu_nwad.activities.HistoryActivity">
@@ -11,9 +12,9 @@
         android:layout_height="wrap_content">
 
         <Spinner
+            android:id="@+id/history_type_spinner"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:id="@+id/history_type_spinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content">
         </Spinner>
@@ -21,6 +22,7 @@
         <EditText
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:textColor="#ffffff"
             android:id="@+id/history_count_edit"
             android:hint="查看历史纪录数量"
             android:inputType="number"
@@ -32,14 +34,17 @@
     <Button
         android:id="@+id/query_history_button"
         android:text="查看"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/history_content"
-        android:hint="历史纪录将显示在这里"
-        android:inputType="textMultiLine"
+    <ListView
+        android:id="@+id/history_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+    </ListView>
+
+
 
 </LinearLayout>
