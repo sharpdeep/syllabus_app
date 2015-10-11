@@ -14,6 +14,10 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.stu_nwad.adapters.DiscussionAdapter;
+import com.example.stu_nwad.syllabus.Discussion;
+import com.example.stu_nwad.syllabus.DiscussionHandler;
+import com.example.stu_nwad.syllabus.DiscussionPullTask;
 import com.example.stu_nwad.syllabus.FileOperation;
 import com.example.stu_nwad.syllabus.Homework;
 import com.example.stu_nwad.syllabus.HomeworkHandler;
@@ -33,11 +37,15 @@ import java.util.HashMap;
 /**
  * Created by STU_nwad on 2015/10/5.
  */
-public class ClassDialog extends Dialog implements View.OnClickListener, HomeworkHandler{
+public class ClassDialog extends Dialog implements View.OnClickListener, HomeworkHandler, DiscussionHandler, TabHost.OnTabChangeListener{
 
     public static Lesson lesson;
 
     Context context;
+
+    public static final String PERSONAL_TAB = "personal";
+    public static final String HOMEWORK_TAB = "homework";
+    public static final String DISCUSS_TAB = "discuss";
 
     // 个人备注区域
     private TextView class_info_text_view;
@@ -56,6 +64,9 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
     private ListView discussion_list_view;
     private Button submit_discussion_button;
     private EditText discussion_content_edit;
+
+    private ArrayList<Discussion> discussions;
+    private DiscussionAdapter discussionAdapter;
 
     private TabHost tabHost;
     private TabHost.TabSpec personal_tab_content;
@@ -95,7 +106,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
 //        last_homework.setVisibility(View.INVISIBLE);
 
         // 当调用这个函数的时候就拉取一次最新的消息
-        get_latest_homework(1);
+//        get_latest_homework(1);
     }
 
 
@@ -121,14 +132,15 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
 
         tabHost = (TabHost) findViewById(android.R.id.tabhost);
         tabHost.setup();
+        tabHost.setOnTabChangedListener(this);
 
-        personal_tab_content = tabHost.newTabSpec("personal").setIndicator("个人").setContent(R.id.personal_layout);
+        personal_tab_content = tabHost.newTabSpec(PERSONAL_TAB).setIndicator("个人").setContent(R.id.personal_layout);
         tabHost.addTab(personal_tab_content);
 
-        homework_tab_content = tabHost.newTabSpec("homework").setIndicator("作业").setContent(R.id.homework_layout);
+        homework_tab_content = tabHost.newTabSpec(HOMEWORK_TAB).setIndicator("作业").setContent(R.id.homework_layout);
         tabHost.addTab(homework_tab_content);
 
-        discuss_tab_content = tabHost.newTabSpec("discuss").setIndicator("吹水").setContent(R.id.talk_layout);
+        discuss_tab_content = tabHost.newTabSpec(DISCUSS_TAB).setIndicator("吹水").setContent(R.id.talk_layout);
         tabHost.addTab(discuss_tab_content);
 
         find_views();
@@ -208,10 +220,28 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
         context.startActivity(history_intent);
     }
 
+    /**
+     * 添加验证课程的信息
+     * @param data
+     */
+    private void add_lesson_identifier(HashMap<String, String> data){
+        // 对应到具体的课程
+        data.put("number", lesson.id);
+        data.put("start_year", lesson.start_year + "");
+        data.put("end_year", lesson.end_year + "");
+        data.put("semester", lesson.semester + "");
+
+    }
+
 
     private void get_latest_homework(int count){
         HomeworkPullTask get_homework_task = new HomeworkPullTask(context, this);
         get_homework_task.get_homework(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
+    }
+
+    private void get_latest_discussion(int count){
+        DiscussionPullTask get_discussion_task = new DiscussionPullTask(context, this);
+        get_discussion_task.get_discussion(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
     }
 
     private void add_lesson_to_database(){
@@ -245,10 +275,8 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
     private void add_homework_to_database(){
         HashMap<String, String> data = new HashMap<>();
         // 对应到具体的课程
-        data.put("number", lesson.id);
-        data.put("start_year", lesson.start_year + "");
-        data.put("end_year", lesson.end_year + "");
-        data.put("semester", lesson.semester + "");
+
+        add_lesson_identifier(data);
 
         // 作业的信息
         data.put("publisher", MainActivity.cur_username);
@@ -270,10 +298,8 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
         HashMap<String, String> data = new HashMap<>();
 
         // 对应到具体的课程
-        data.put("number", lesson.id);
-        data.put("start_year", lesson.start_year + "");
-        data.put("end_year", lesson.end_year + "");
-        data.put("semester", lesson.semester + "");
+
+        add_lesson_identifier(data);
 
         // 讨论的信息
         data.put("publisher", MainActivity.cur_username);
@@ -296,6 +322,49 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
         Homework latest = all_homework.get(all_homework.size() - 1);    // 最新发布的作业
         last_homework.setText(latest.toString());
     }
+
+    @Override
+    public void deal_with_discussion(ArrayList<Discussion> all_discussions) {
+        if (all_discussions == null){
+            Log.d(MainActivity.TAG, "看起来没读取到吐槽信息呢");
+            return;
+        }
+
+        // 显示最新的吐槽
+        if (this.discussions == null) {
+            this.discussions = new ArrayList<>(all_discussions);
+        }else{
+            this.discussions.clear();
+            this.discussions.addAll(all_discussions);
+        }
+        if (discussionAdapter == null){
+            discussionAdapter = new DiscussionAdapter(context, R.layout.discuss_item_layout, this.discussions);
+            discussion_list_view.setAdapter(discussionAdapter);
+        }else{
+            // 更新list view的显示， 注意上面是如何更新 this.discussions 里面的内容的！
+            // 不可以直接 this.discussions = all_discussions
+            // 否则只是把 this.discussions 这个引用本身指向的地方改变了
+            discussionAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onTabChanged(String tabId) {
+//        personal_tab_content = tabHost.newTabSpec("personal").setIndicator("个人").setContent(R.id.personal_layout);
+//        tabHost.addTab(personal_tab_content);
+//
+//        homework_tab_content = tabHost.newTabSpec("homework").setIndicator("作业").setContent(R.id.homework_layout);
+//        tabHost.addTab(homework_tab_content);
+//
+//        discuss_tab_content = tabHost.newTabSpec("discuss").setIndicator("吹水").setContent(R.id.talk_layout);
+
+        if (tabId.equals(HOMEWORK_TAB))
+            get_latest_homework(1);
+        else if (tabId.equals(DISCUSS_TAB))
+            get_latest_discussion(5);  // 显示10条吐槽信息
+
+    }
+
 
     /**
      * 用于完成 需要 POST 的网络任务
@@ -374,7 +443,33 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
 
         @Override
         protected void onPostExecute(String response){
-            discussion_content_edit.setText(response);
+            if (response.isEmpty()){
+                Toast.makeText(context, "error connection", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            JSONTokener json_parser = new JSONTokener(response);
+            try {
+                JSONObject json_obj = (JSONObject) json_parser.nextValue();
+                if (json_obj.has(HomeworkParser.ERROR_STRING)){
+                    String error_string = json_obj.getString(HomeworkParser.ERROR_STRING);
+                    String NO_SUCH_CLASS = "no such class";
+                    String NO_SUCH_USER = "no such user";
+                    // 这是第一个检查的元素
+                    if (error_string.equals(NO_SUCH_CLASS)){
+                        // 说明要添加这节课到数据库中
+                        add_lesson_to_database();
+                    }else if (error_string.equals(NO_SUCH_USER)){
+                        // 说明要添加用户到数据库中
+                        add_user_to_database();
+                    }
+                    // 再试一次 应该就ok了
+                    add_discussion_to_database();
+                }else{
+                    Toast.makeText(context, "吐槽成功", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

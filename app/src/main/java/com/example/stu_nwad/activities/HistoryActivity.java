@@ -30,6 +30,8 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
     private ArrayAdapter<String> data_adapter;
     private HomeworkAdapter homeworkAdapter;
 
+    private ArrayList<Homework> all_homework;
+
     private Spinner history_type_spinner;
     private Button query_history_button;
 //    private EditText history_content;
@@ -124,12 +126,23 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
     public void deal_with_homework(ArrayList<Homework> all_homework) {
         if (all_homework == null){
 //            history_content.setText("None");
-            Toast.makeText(HistoryActivity.this, "没有作业的历史信息呢", Toast.LENGTH_SHORT).show();
+            Toast.makeText(HistoryActivity.this, "没有查询到作业的历史信息呢", Toast.LENGTH_SHORT).show();
             return ;
         }
+        if (this.all_homework == null){
+            this.all_homework = new ArrayList<>(all_homework);
+        }else{
+            this.all_homework.clear();
+            this.all_homework.addAll(all_homework);
+        }
 
-        homeworkAdapter = new HomeworkAdapter(this, R.layout.homework_list_item, all_homework);
-        history_list_view.setAdapter(homeworkAdapter);
+        // 减少内存的使用
+        if (homeworkAdapter == null) {
+            homeworkAdapter = new HomeworkAdapter(this, R.layout.homework_list_item, all_homework);
+            history_list_view.setAdapter(homeworkAdapter);
+        }else{
+            homeworkAdapter.notifyDataSetChanged();
+        }
 
 //        StringBuilder sb = new StringBuilder();
 //        for(Homework homework : all_homework)
