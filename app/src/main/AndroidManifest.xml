@@ -18,16 +18,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.example.stu_nwad.activities.SyllabusActivity"
             android:label="@string/title_activity_syllabus" >
         </activity>
-
-        <activity android:name="com.example.stu_nwad.activities.MyTabActivity"
-            android:label="各种区域">
+        <activity
+            android:name="com.example.stu_nwad.activities.MyTabActivity"
+            android:label="各种区域" >
         </activity>
-
+        <activity
+            android:name="com.example.stu_nwad.activities.HistoryActivity"
+            android:label="@string/title_activity_history" >
+        </activity>
     </application>
 
 </manifest>

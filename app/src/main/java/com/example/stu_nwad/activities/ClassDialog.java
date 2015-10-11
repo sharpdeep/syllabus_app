@@ -2,6 +2,7 @@ package com.example.stu_nwad.activities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -124,6 +125,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         // add listeners
         submit_button.setOnClickListener(this);
         homework_submit_button.setOnClickListener(this);
+        homework_history_button.setOnClickListener(this);
     }
 
 
@@ -132,9 +134,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setup_views();
         setLesson(lesson);
-//        add_user_to_database();
-//        add_lesson_to_database();
-//        get_latest_homework(1); // 获取最新的作业
+
     }
 
     @Override
@@ -177,13 +177,23 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
             case R.id.homework_submit_button:
                 add_homework_to_database();
                 break;
+
+            // 作业历史
+            case R.id.homework_history_button:
+                show_history_activity(HistoryActivity.HISTORY_TYPES[0]);
+                break;
         }
+    }
+
+    private void show_history_activity(String type){
+        Intent history_intent = new Intent(context, HistoryActivity.class);
+        history_intent.putExtra("type", type);
+        context.startActivity(history_intent);
     }
 
 
     private void get_latest_homework(int count){
-        String base_addr = "http://10.22.27.65/api/course_info/0";
-//        http://127.0.0.1:5000/api/course_info/0?number=79781&end_year=2016&semester=1&start_year=2015&count=-1
+        String base_address = context.getString(R.string.get_home_work_api);
         HashMap<String, String> data = new HashMap<>();
         data.put("number", lesson.id);
         data.put("start_year", lesson.start_year + "");
@@ -191,7 +201,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         data.put("semester", lesson.semester + "");
         data.put("count", count + "");
 
-        PullTask get_homework_task = new PullTask(base_addr);
+        HomeworkPullTask get_homework_task = new HomeworkPullTask(base_address);
         get_homework_task.execute(data);
 
     }
@@ -212,7 +222,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         data.put("semester", lesson.semester + "");
 
         // 添加课程
-        InsertTask insert_class_task = new InsertTask("http://10.22.27.65/api/course");
+        InsertTask insert_class_task = new InsertTask(context.getString(R.string.insert_class_api));
         insert_class_task.execute(data);
 
     }
@@ -221,15 +231,11 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         HashMap<String, String> data = new HashMap<>();
         // 用户名
         data.put("username", MainActivity.cur_username);
-        InsertTask insert_user_task = new InsertTask("http://10.22.27.65/api/user");
+        InsertTask insert_user_task = new InsertTask(context.getString(R.string.insert_user_api));
         insert_user_task.execute(data);
     }
 
     private void add_homework_to_database(){
-//        self.parser.add_argument("publisher", required=True)
-//        self.parser.add_argument("pub_time", required=True, type=float)
-//        self.parser.add_argument("hand_in_time", required=True)
-//        self.parser.add_argument("content", required=True)
         HashMap<String, String> data = new HashMap<>();
         // 对应到具体的课程
         data.put("number", lesson.id);
@@ -244,7 +250,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         data.put("hand_in_time", homework_time_edit.getText().toString());
         data.put("content", homework_content_edit.getText().toString());
 
-        InsertTask insert_homework_task = new InsertTask("http://10.22.27.65/api/homework");
+        InsertTask insert_homework_task = new InsertTask(context.getString(R.string.insert_home_work_api));
         insert_homework_task.execute(data);
 
     }
@@ -253,11 +259,11 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
     /**
      * 从服务器拉取数据
      */
-    class PullTask extends AsyncTask<HashMap<String, String>, Void, String>{
+    class HomeworkPullTask extends AsyncTask<HashMap<String, String>, Void, String>{
 
         private String address;
 
-        public PullTask(String addr){
+        public HomeworkPullTask(String addr){
             this.address = addr;
         }
 
