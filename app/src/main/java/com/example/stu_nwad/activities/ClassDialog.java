@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,8 @@ import java.util.HashMap;
  */
 public class ClassDialog extends Dialog implements View.OnClickListener, HomeworkHandler{
 
+    public static Lesson lesson;
+
     Context context;
 
     // 个人备注区域
@@ -49,16 +52,17 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
     private Button homework_submit_button;
     private Button homework_history_button;
 
+    // 吹水区
+    private ListView discussion_list_view;
+    private Button submit_discussion_button;
+    private EditText discussion_content_edit;
+
     private TabHost tabHost;
     private TabHost.TabSpec personal_tab_content;
     private TabHost.TabSpec homework_tab_content;
     private TabHost.TabSpec discuss_tab_content;
 
 
-
-
-
-    public static Lesson lesson;
 
     public ClassDialog(Context context) {
         super(context);
@@ -105,6 +109,10 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
         homework_submit_button = (Button) tabHost.findViewById(R.id.homework_submit_button);
         homework_history_button = (Button) tabHost.findViewById(R.id.homework_history_button);
         last_homework = (EditText) tabHost.findViewById(R.id.last_homework);
+
+        discussion_list_view = (ListView) tabHost.findViewById(R.id.discuss_list_view);
+        discussion_content_edit = (EditText) tabHost.findViewById(R.id.talk_field);
+        submit_discussion_button = (Button) tabHost.findViewById(R.id.submit_discussion_button);
     }
 
     private void setup_views(){
@@ -129,6 +137,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
         submit_button.setOnClickListener(this);
         homework_submit_button.setOnClickListener(this);
         homework_history_button.setOnClickListener(this);
+        submit_discussion_button.setOnClickListener(this);
     }
 
 
@@ -185,6 +194,11 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
             case R.id.homework_history_button:
                 show_history_activity(HistoryActivity.HISTORY_TYPES[0]);
                 break;
+
+            // 添加讨论信息到相应课程
+            case R.id.submit_discussion_button:
+                add_discussion_to_database();
+                break;
         }
     }
 
@@ -238,7 +252,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
 
         // 作业的信息
         data.put("publisher", MainActivity.cur_username);
-        long timestamp = (int) (System.currentTimeMillis() / 1000);
+        long timestamp =  (System.currentTimeMillis() / 1000);
         data.put("pub_time", timestamp + "");  // 现在的时间
         data.put("hand_in_time", homework_time_edit.getText().toString());
         data.put("content", homework_content_edit.getText().toString().trim()); // 去除没必要的空白字符
@@ -246,6 +260,29 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
         InsertTask insert_homework_task = new InsertTask(context.getString(R.string.insert_home_work_api));
         insert_homework_task.execute(data);
 
+    }
+
+//    self.parser.add_argument("publisher", required=True)
+//            self.parser.add_argument("pub_time", required=True, type=float)
+//            self.parser.add_argument("content", required=True)
+
+    public void add_discussion_to_database(){
+        HashMap<String, String> data = new HashMap<>();
+
+        // 对应到具体的课程
+        data.put("number", lesson.id);
+        data.put("start_year", lesson.start_year + "");
+        data.put("end_year", lesson.end_year + "");
+        data.put("semester", lesson.semester + "");
+
+        // 讨论的信息
+        data.put("publisher", MainActivity.cur_username);
+        long timestamp = (System.currentTimeMillis() / 1000);
+        data.put("pub_time", timestamp + "");
+        data.put("content", discussion_content_edit.getText().toString());
+
+        InsertDiscussionTask task = new InsertDiscussionTask(context.getString(R.string.insert_discussion_api));
+        task.execute(data);
     }
 
     @Override
@@ -257,11 +294,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
 
         // 显示最新的作业
         Homework latest = all_homework.get(all_homework.size() - 1);    // 最新发布的作业
-//        homework_time_edit.setText(latest.hand_in_time + "");
-//        homework_content_edit.setText( latest.content );
         last_homework.setText(latest.toString());
-//        last_homework.setVisibility(View.VISIBLE);
-
     }
 
     /**
@@ -292,7 +325,6 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
                 Toast.makeText(context, "error connection", Toast.LENGTH_SHORT).show();
                 return;
             }
-//            homework_content_edit.setText(response);
             JSONTokener json_parser = new JSONTokener(response);
             try {
                 JSONObject json_obj = (JSONObject) json_parser.nextValue();
@@ -316,6 +348,33 @@ public class ClassDialog extends Dialog implements View.OnClickListener, Homewor
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+
+    /**
+     * 用于插入评论
+     */
+    class InsertDiscussionTask extends AsyncTask<HashMap<String, String>, Void, String>{
+
+        private String address;
+
+        public InsertDiscussionTask(String addr){
+            this.address = addr;
+        }
+
+        public void setAddress(String addr){
+            this.address = addr;
+        }
+
+        @Override
+        protected String doInBackground(HashMap<String, String>... params) {
+            return HttpCommunication.performPostCall(this.address, params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String response){
+            discussion_content_edit.setText(response);
         }
     }
 }

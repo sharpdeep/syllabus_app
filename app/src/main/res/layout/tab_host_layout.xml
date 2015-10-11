@@ -124,6 +124,11 @@
                 android:layout_height="match_parent">
 
 
+                <ListView
+                    android:id="@+id/discuss_list_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </ListView>
 
                 <EditText
                     android:inputType="textMultiLine"
@@ -131,11 +136,12 @@
                     android:maxLength="140"
                     android:maxHeight="200dp"
                     android:background="@drawable/text_box"
-                    android:hint="吹水区"
+                    android:hint="140个字想怎么吹怎么吹~"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <Button
+                    android:id="@+id/submit_discussion_button"
                     android:text="提交"
                     android:background="@drawable/text_box"
                     android:layout_width="match_parent"

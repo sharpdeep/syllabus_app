@@ -3,13 +3,14 @@
     <string name="title_activity_syllabus">课程表</string>
     <string name="help_message">输入账号密码之后直接点击下面的学期即可查看课表</string>
     <string name="about_message">Email: 14xfdeng@stu.edu.cn</string>
-    <string name="server_address">http://192.168.1.100:5000/syllabus</string>
-    <string name="server_ip">192.168.1.100:5000</string>
+    <string name="server_address">http://10.22.27.65/syllabus</string>
+    <string name="server_ip">10.22.27.65</string>
     <string name="server_ip_debug">192.168.1.103</string>
     <string name="debug_port">5000</string>
-    <string name="get_home_work_api">http://192.168.1.100:5000/api/course_info/0</string>
-    <string name="insert_class_api">http://192.168.1.100:5000/api/course</string>
-    <string name="insert_user_api">http://192.168.1.100:5000/api/user</string>
-    <string name="insert_home_work_api">http://192.168.1.100:5000/api/homework</string>
+    <string name="get_home_work_api">http://10.22.27.65/api/course_info/0</string>
+    <string name="insert_class_api">http://10.22.27.65/api/course</string>
+    <string name="insert_user_api">http://10.22.27.65/api/user</string>
+    <string name="insert_home_work_api">http://10.22.27.65/api/homework</string>
+    <string name="insert_discussion_api">http://10.22.27.65/api/discuss</string>
     <string name="title_activity_history">历史纪录</string>
 </resources>
