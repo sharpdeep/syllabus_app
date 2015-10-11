@@ -117,7 +117,7 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
         // Homework
         if (history_type_spinner.getSelectedItem().toString().equals(HISTORY_TYPES[0])){
             HomeworkPullTask task = new HomeworkPullTask(this, this);
-            Lesson lesson = ClassDialog.lesson;
+            Lesson lesson = MyTabActivity.lesson;
             task.get_homework(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
         }
     }

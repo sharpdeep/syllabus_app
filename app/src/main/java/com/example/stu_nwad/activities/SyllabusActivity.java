@@ -1,4 +1,5 @@
 package com.example.stu_nwad.activities;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,6 +14,9 @@ import com.example.stu_nwad.syllabus.R;
 
 
 public class SyllabusActivity extends AppCompatActivity {
+
+    public static Lesson clicked_lesson;
+
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -57,12 +61,15 @@ public class SyllabusActivity extends AppCompatActivity {
     }
 
     public void showClassInfo(Lesson lesson){
-        if (dialog == null)
-            dialog = new ClassDialog(this, R.style.ClassDialog, lesson);
-        else
-            dialog.setLesson(lesson);
-
-        dialog.show();
+//        if (dialog == null)
+//            dialog = new ClassDialog(this, R.style.ClassDialog, lesson);
+//        else
+//            dialog.setLesson(lesson);
+//
+//        dialog.show();
+        clicked_lesson = lesson;
+        Intent tab_intent = new Intent(this, MyTabActivity.class);
+        startActivity(tab_intent);
     }
 
     @Override

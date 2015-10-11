@@ -56,7 +56,8 @@ public class DiscussionPullTask extends AsyncTask<HashMap<String, String>, Void,
     protected void onPostExecute(String response){
         DiscussionParser parser = new DiscussionParser(context);
         ArrayList<Discussion> discussions = parser.parse_json(response);
-        Collections.reverse(discussions);
+        if (discussions != null)
+            Collections.reverse(discussions);
         discussionHandler.deal_with_discussion(discussions);
     }
 }
