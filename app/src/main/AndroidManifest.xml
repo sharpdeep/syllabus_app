@@ -24,7 +24,8 @@
         </activity>
         <activity
             android:name="com.example.stu_nwad.activities.MyTabActivity"
-            android:label="各种区域" >
+            android:windowSoftInputMode="adjustResize"
+            android:label="具体信息" >
         </activity>
         <activity
             android:name="com.example.stu_nwad.activities.HistoryActivity"

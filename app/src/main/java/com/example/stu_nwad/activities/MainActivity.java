@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);  // 加载主布局
-        YEARS = generate_years(5);  // 生成5年的选项
+        YEARS = generate_years(4);  // 生成5年的选项
         getAllViews();
         setupViews();
     }

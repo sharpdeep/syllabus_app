@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent" android:layout_height="match_parent">
 
 
-    <TextView
-        android:layout_marginLeft="2dp"
-        android:id="@+id/dialog_content"
-        android:layout_margin="5dp"
-        android:hint="具体的课程信息"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <include layout="@layout/tab_host_layout" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:background="#2b2b2b"
+        android:layout_width="match_parent" android:layout_height="match_parent">
 
 
+        <TextView
+            android:layout_marginLeft="2dp"
+            android:id="@+id/dialog_content"
+            android:textColor="#ffffff"
+            android:layout_margin="5dp"
+            android:hint="具体的课程信息"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <include layout="@layout/tab_host_layout"/>
 
 
-</LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+
+
+

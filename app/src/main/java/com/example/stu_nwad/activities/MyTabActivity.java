@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,21 +75,6 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
     private TabHost.TabSpec discuss_tab_content;
 
 
-
-//    public MyTabActivity(Context context) {
-////        super();
-//        this.context = context;
-//    }
-
-//    public MyTabActivity(Context context, int themeId, Lesson lesson){
-//        super(context, themeId);
-//        this.context = context;
-//        this.lesson = lesson;
-        // 碰触到外面不会dismiss
-//        setCanceledOnTouchOutside(false);
-
-//    }
-
     public void setLesson(Lesson lesson){
         this.lesson = lesson;
 //        Log.d(MainActivity.TAG, lesson.representation());
@@ -143,6 +129,15 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
         discuss_tab_content = tabHost.newTabSpec(DISCUSS_TAB).setIndicator("吹水").setContent(R.id.talk_layout);
         tabHost.addTab(discuss_tab_content);
 
+        // 设置标题栏为白色的字
+
+        TabWidget tabWidget = tabHost.getTabWidget();
+        for(int i = 0 ; i < tabWidget.getChildCount() ; ++ i){
+            TextView title =  (TextView) tabWidget.getChildAt(i).findViewById(android.R.id.title);
+            // 貌似提供足够的 4 个字节，不然无效
+            title.setTextColor(0xffffffff);
+        }
+
         find_views();
 
         // add listeners
@@ -162,16 +157,13 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-//    @Override
-//    public void show(){
-//        // show 之后才调用 onCreate的
-////        super.show();
-//    }
 
     private boolean save_comment(){
         if (personal_comment_area.getText().toString().isEmpty())
             return false;
-        // 内容没有改变
+        // 到这里即内容没有改变
+
+
         if (personal_comment_area.getText().toString().equals(personal_comment))
             return false;
         String info = MainActivity.info_about_syllabus;
@@ -211,6 +203,9 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
             // 添加讨论信息到相应课程
             case R.id.submit_discussion_button:
                 add_discussion_to_database();
+                break;
+
+            default:
                 break;
         }
     }
@@ -351,13 +346,6 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onTabChanged(String tabId) {
-//        personal_tab_content = tabHost.newTabSpec("personal").setIndicator("个人").setContent(R.id.personal_layout);
-//        tabHost.addTab(personal_tab_content);
-//
-//        homework_tab_content = tabHost.newTabSpec("homework").setIndicator("作业").setContent(R.id.homework_layout);
-//        tabHost.addTab(homework_tab_content);
-//
-//        discuss_tab_content = tabHost.newTabSpec("discuss").setIndicator("吹水").setContent(R.id.talk_layout);
 
         if (tabId.equals(HOMEWORK_TAB))
             get_latest_homework(1);

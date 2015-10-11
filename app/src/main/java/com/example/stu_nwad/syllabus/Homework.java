@@ -21,7 +21,7 @@ public class Homework {
 
     @Override
     public String toString(){
-        return "发布者 " + publisher + "\n发布时间 " + transfer_time() + "\n" + "上交时间 " + hand_in_time + "\n内容" + content;
+        return "发布者 " + publisher + "\n发布时间 " + transfer_time() + "\n" + "上交时间 " + hand_in_time + "\n内容:\n" + content;
     }
 
 }

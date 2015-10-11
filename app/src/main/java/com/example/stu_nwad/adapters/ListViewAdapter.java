@@ -16,7 +16,7 @@ import com.example.stu_nwad.syllabus.R;
 public class ListViewAdapter extends BaseAdapter {
 
     // 存放近四年的课表
-    public static final int COUNT = 5;
+    public static final int COUNT = 4;
 
     private  String[] syllabus_data;// = new String[4];
     private Context context;
