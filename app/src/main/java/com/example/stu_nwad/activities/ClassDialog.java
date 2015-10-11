@@ -15,7 +15,9 @@ import android.widget.Toast;
 
 import com.example.stu_nwad.syllabus.FileOperation;
 import com.example.stu_nwad.syllabus.Homework;
+import com.example.stu_nwad.syllabus.HomeworkHandler;
 import com.example.stu_nwad.syllabus.HomeworkParser;
+import com.example.stu_nwad.syllabus.HomeworkPullTask;
 import com.example.stu_nwad.syllabus.HttpCommunication;
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.syllabus.R;
@@ -24,14 +26,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Created by STU_nwad on 2015/10/5.
  */
-public class ClassDialog extends Dialog implements View.OnClickListener{
+public class ClassDialog extends Dialog implements View.OnClickListener, HomeworkHandler{
 
     Context context;
 
@@ -42,6 +43,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
     private String personal_comment = "";
 
     // 作业区
+    private EditText last_homework;
     private EditText homework_content_edit;
     private EditText homework_time_edit;
     private Button homework_submit_button;
@@ -56,7 +58,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
 
 
 
-    private Lesson lesson;
+    public static Lesson lesson;
 
     public ClassDialog(Context context) {
         super(context);
@@ -86,6 +88,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         // 每次设置这个的时候应该把之前的数据先清空
         homework_content_edit.setText("");
         homework_time_edit.setText("");
+//        last_homework.setVisibility(View.INVISIBLE);
 
         // 当调用这个函数的时候就拉取一次最新的消息
         get_latest_homework(1);
@@ -101,7 +104,7 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         homework_content_edit = (EditText) tabHost.findViewById(R.id.homework_content_edit);
         homework_submit_button = (Button) tabHost.findViewById(R.id.homework_submit_button);
         homework_history_button = (Button) tabHost.findViewById(R.id.homework_history_button);
-
+        last_homework = (EditText) tabHost.findViewById(R.id.last_homework);
     }
 
     private void setup_views(){
@@ -193,19 +196,9 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
 
 
     private void get_latest_homework(int count){
-        String base_address = context.getString(R.string.get_home_work_api);
-        HashMap<String, String> data = new HashMap<>();
-        data.put("number", lesson.id);
-        data.put("start_year", lesson.start_year + "");
-        data.put("end_year", lesson.end_year + "");
-        data.put("semester", lesson.semester + "");
-        data.put("count", count + "");
-
-        HomeworkPullTask get_homework_task = new HomeworkPullTask(base_address);
-        get_homework_task.execute(data);
-
+        HomeworkPullTask get_homework_task = new HomeworkPullTask(context, this);
+        get_homework_task.get_homework(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
     }
-
 
     private void add_lesson_to_database(){
         // def __init__(self, number, name, credit, teacher, room, span, time_, start_year, end_year, semester):
@@ -248,53 +241,26 @@ public class ClassDialog extends Dialog implements View.OnClickListener{
         long timestamp = (int) (System.currentTimeMillis() / 1000);
         data.put("pub_time", timestamp + "");  // 现在的时间
         data.put("hand_in_time", homework_time_edit.getText().toString());
-        data.put("content", homework_content_edit.getText().toString());
+        data.put("content", homework_content_edit.getText().toString().trim()); // 去除没必要的空白字符
 
         InsertTask insert_homework_task = new InsertTask(context.getString(R.string.insert_home_work_api));
         insert_homework_task.execute(data);
 
     }
 
-
-    /**
-     * 从服务器拉取数据
-     */
-    class HomeworkPullTask extends AsyncTask<HashMap<String, String>, Void, String>{
-
-        private String address;
-
-        public HomeworkPullTask(String addr){
-            this.address = addr;
+    @Override
+    public void deal_with_homework(ArrayList<Homework> all_homework) {
+        if (all_homework == null) {
+            Log.d(MainActivity.TAG, "看起来好像all_homework是null呢.....");
+            return;
         }
 
-        @Override
-        protected String doInBackground(HashMap<String, String>... params) {
-            try {
-                String query_string = HttpCommunication.get_url_encode_string(params[0]);
-                Log.d(MainActivity.TAG, query_string);
-                return HttpCommunication.perform_get_call(address + "?" + query_string);
-
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                return "";
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String response){
-            HomeworkParser parser = new HomeworkParser(context);
-            ArrayList<Homework> all_homework = parser.parser_json(response);
-//            Log.d(MainActivity.TAG, "Homework数据已经解析完毕");
-            if (all_homework != null){
-                Homework latest = all_homework.get(all_homework.size() - 1);    // 最新发布的作业
-                homework_time_edit.setText(latest.hand_in_time + "");
-                homework_content_edit.setText(latest.content + "");
-//                Log.d(MainActivity.TAG, latest.toString());
-            }else{
-                Log.d(MainActivity.TAG, "看起来好像all_homework是null呢.....");
-//                homework_content_edit.setText("看起来好像all_homework是null呢.....");
-            }
-        }
+        // 显示最新的作业
+        Homework latest = all_homework.get(all_homework.size() - 1);    // 最新发布的作业
+//        homework_time_edit.setText(latest.hand_in_time + "");
+//        homework_content_edit.setText( latest.content );
+        last_homework.setText(latest.toString());
+//        last_homework.setVisibility(View.VISIBLE);
 
     }
 
