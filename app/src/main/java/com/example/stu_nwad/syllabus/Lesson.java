@@ -38,7 +38,7 @@ public class Lesson {
 
     // 用于表现这个课程的完整信息
     public String representation(){
-        return  start_year + "-" + end_year + "\n" + "\n班号:" + id + "\n课程名: " + name + "\n教师: " + teacher + "\n" + "教室: " + room + "\n" + "上课周数: " + duration + "\n学分: " + credit;
+        return  "班号:" + id + "\n课程名: " + name + "\n教师: " + teacher + "\n" + "教室: " + room + "\n" + "上课周数: " + duration + "\n学分: " + credit;
     }
 
     // 主要用于显示周末课程时候的表达呢

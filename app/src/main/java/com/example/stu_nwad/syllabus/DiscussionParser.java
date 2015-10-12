@@ -23,17 +23,6 @@ public class DiscussionParser {
         this.context = context;
     }
 
-//    {
-//        "count": 1,
-//            "discussions": [
-//        {
-//            "content": "Hello,World",
-//                "publisher": "14xfdeng",
-//                "time": 999999
-//        }
-//        ]
-//    }
-
     public ArrayList<Discussion> parse_json(String json_data){
         JSONTokener json_parser = new JSONTokener(json_data);
         try {

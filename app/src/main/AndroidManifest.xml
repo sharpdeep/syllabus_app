@@ -24,12 +24,16 @@
         </activity>
         <activity
             android:name="com.example.stu_nwad.activities.MyTabActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:label="具体信息" >
+            android:label="具体信息"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name="com.example.stu_nwad.activities.HistoryActivity"
             android:label="@string/title_activity_history" >
+        </activity>
+        <activity
+            android:name="com.example.stu_nwad.activities.AboutActivity"
+            android:label="@string/title_activity_about" >
         </activity>
     </application>
 

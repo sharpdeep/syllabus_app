@@ -3,15 +3,30 @@
     <string name="title_activity_syllabus">课程表</string>
     <string name="help_message">输入账号密码之后直接点击下面的学期即可查看课表</string>
     <string name="about_message">Email: 14xfdeng@stu.edu.cn</string>
-    <string name="server_address">http://192.168.1.100:5000/syllabus</string>
-    <string name="server_ip">192.168.1.100:5000</string>
+    <string name="server_address">http://10.22.27.65/syllabus</string>
+    <string name="server_ip">10.22.27.65</string>
     <string name="server_ip_debug">192.168.1.100</string>
     <string name="debug_port">5000</string>
-    <string name="get_home_work_api">http://192.168.1.100:5000/api/course_info/0</string>
-    <string name="get_discussion_api">http://192.168.1.100:5000/api/course_info/1</string>
-    <string name="insert_class_api">http://192.168.1.100:5000/api/course</string>
-    <string name="insert_user_api">http://192.168.1.100:5000/api/user</string>
-    <string name="insert_home_work_api">http://192.168.1.100:5000/api/homework</string>
-    <string name="insert_discussion_api">http://192.168.1.100:5000/api/discuss</string>
+    <string name="get_home_work_api">http://10.22.27.65/api/course_info/0</string>
+    <string name="get_discussion_api">http://10.22.27.65/api/course_info/1</string>
+    <string name="insert_class_api">http://10.22.27.65/api/course</string>
+    <string name="insert_user_api">http://10.22.27.65/api/user</string>
+    <string name="insert_home_work_api">http://10.22.27.65/api/homework</string>
+    <string name="insert_discussion_api">http://10.22.27.65/api/discuss</string>
     <string name="title_activity_history">历史记录</string>
+    <string name="title_activity_about">Small Fly\'s Words</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="about_information">
+        一直在想关于汕大的APP比较少，
+        然后学校的课程信息也是不对外公开的
+        所以当需要使用课程表软件的时候往往需要
+        自己手动添加课程。然后想着如何去实现一个
+        一键添加课程表的APP。然后又想到如果加点
+        互动信息更为有意义，于是就有了有同一节课的同学可以分享各学科的作业布置信息。
+        而且也可以进行吐槽，信息都是对拥有同一节课的同学可见。
+        基本功能都okay了，但是因为时间匆忙，还有诸多不完善的地方，如果
+        大家有任何想法和建议都可以通过邮件发给我。希望这是一个能够长期驻扎于你手机的应用
+        : ) 2015-10-12 By 晓拂</string>
+
 </resources>

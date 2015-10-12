@@ -13,8 +13,12 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.stu_nwad.adapters.DiscussionAdapter;
 import com.example.stu_nwad.adapters.HomeworkAdapter;
 import com.example.stu_nwad.adapters.ListViewAdapter;
+import com.example.stu_nwad.syllabus.Discussion;
+import com.example.stu_nwad.syllabus.DiscussionHandler;
+import com.example.stu_nwad.syllabus.DiscussionPullTask;
 import com.example.stu_nwad.syllabus.Homework;
 import com.example.stu_nwad.syllabus.HomeworkHandler;
 import com.example.stu_nwad.syllabus.HomeworkPullTask;
@@ -22,15 +26,18 @@ import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.syllabus.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
-public class HistoryActivity extends AppCompatActivity implements HomeworkHandler, View.OnClickListener{
+public class HistoryActivity extends AppCompatActivity implements HomeworkHandler, DiscussionHandler, View.OnClickListener{
 
     public static final String[] HISTORY_TYPES = {"Homework", "Discussion"};
 
     private ArrayAdapter<String> data_adapter;
     private HomeworkAdapter homeworkAdapter;
+    private DiscussionAdapter discussionAdapter;
 
     private ArrayList<Homework> all_homework;
+    private ArrayList<Discussion> all_discussions;
 
     private Spinner history_type_spinner;
     private Button query_history_button;
@@ -120,6 +127,13 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
             Lesson lesson = MyTabActivity.lesson;
             task.get_homework(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
         }
+
+        // Discussions
+        if (history_type_spinner.getSelectedItem().toString().equals(HISTORY_TYPES[1])){
+            DiscussionPullTask discussionPullTask = new DiscussionPullTask(this, this);
+            Lesson lesson = MyTabActivity.lesson;
+            discussionPullTask.get_discussion(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
+        }
     }
 
     @Override
@@ -143,11 +157,6 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
         }else{
             homeworkAdapter.notifyDataSetChanged();
         }
-
-//        StringBuilder sb = new StringBuilder();
-//        for(Homework homework : all_homework)
-//            sb.append(homework.toString() + "\n\n");
-//        history_content.setText(sb.toString());
     }
 
     @Override
@@ -157,5 +166,20 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
                 query_history();
                 break;
         }
+    }
+
+    @Override
+    public void deal_with_discussion(ArrayList<Discussion> all_discussions) {
+        if (all_discussions == null){
+            Toast.makeText(HistoryActivity.this, "没有查找到吐槽记录呢~~~", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 这个界面顺序和之前的界面顺序相反
+        Collections.reverse(all_discussions);
+
+        discussionAdapter = new DiscussionAdapter(this, R.layout.discuss_item_layout, all_discussions);
+        history_list_view.setAdapter(discussionAdapter);
+
     }
 }

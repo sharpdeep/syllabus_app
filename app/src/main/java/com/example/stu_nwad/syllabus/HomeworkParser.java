@@ -57,7 +57,7 @@ public class HomeworkParser {
             JSONObject json_obj = (JSONObject) json_parser.nextValue();
             if (json_obj.has(ERROR_STRING)){
                 String err = json_obj.getString(ERROR_STRING);
-                Toast.makeText(context, "解析Homework类出错: " + err, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "解析Homework类出错: " + err, Toast.LENGTH_SHORT).show();
                 Log.d(MainActivity.TAG, err);
                 return null;
             }
@@ -77,12 +77,11 @@ public class HomeworkParser {
                 homework.pub_time = homework_obj.getInt("pub_time");
                 homework.hand_in_time = homework_obj.getString("hand_in_time");
 
-                Log.d(MainActivity.TAG, homework.toString());
-
+//                Log.d(MainActivity.TAG, homework.toString());
                 all_homework.add(homework);
             }
             Log.d(MainActivity.TAG, "The length of homework is " + all_homework.size());
-            Toast.makeText(context, "HOMEWORK数据解析成功", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "HOMEWORK数据解析成功", Toast.LENGTH_SHORT).show();
             return all_homework;
 
         } catch (JSONException e) {

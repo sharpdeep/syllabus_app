@@ -96,14 +96,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // debug
-//        TextView about_text = (TextView) findViewById(R.id.about_text_box);
-//        about_text.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent tab = new Intent(MainActivity.this, MyTabActivity.class);
-//                startActivity(tab);
-//            }
-//        });
+        TextView about_text = (TextView) findViewById(R.id.about_text_box);
+        about_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent about = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(about);
+            }
+        });
     }
 
 
@@ -260,13 +260,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String response){
                 if (response.isEmpty()){
-                    Toast.makeText(MainActivity.this, "没能成功连接到服务器呢~~~~重试一下吧~~~~", Toast.LENGTH_SHORT).show();
+                    String err_msg = "吖!没能连接到服务器呢~重试一下" + "\n" + "请确保接入学校内网哟~\n"
+                            + "学分制系统服务器可能关了" + "\n宿舍服务器可能没开呢~" + "\n再重试一下试试看~";
+                    Toast.makeText(MainActivity.this, err_msg, Toast.LENGTH_LONG).show();
                     return;
                 }
                 parse_and_display(response);
 
             }
-
             private void parse_and_display(String json_data){
                 if (classParser.parseJSON(json_data)) {
                     classParser.inflateTable();     // 用数据填充课表

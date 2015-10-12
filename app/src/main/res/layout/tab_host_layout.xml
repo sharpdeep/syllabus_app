@@ -29,17 +29,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-
-                <EditText
-                    android:id="@+id/personal_note"
-                    android:layout_weight="5"
-                    android:gravity="left"
-                    android:inputType="textMultiLine"
-                    android:background="@drawable/inputbox"
-                    android:hint="个人备忘录"
-                    android:textColor="#ffffff"
+                <ScrollView
+                    android:layout_weight="3"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp" />
+                    android:layout_height="0dp">
+
+                    <EditText
+                        android:id="@+id/personal_note"
+                        android:gravity="start"
+                        android:inputType="textMultiLine"
+                        android:minLines="20"
+                        android:background="@drawable/input_box"
+                        android:hint="个人备忘录"
+                        android:textColor="#ffffff"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </ScrollView>
+
+
 
                 <Button
                     android:id="@+id/personal_submit"
@@ -69,7 +77,7 @@
                     <EditText
                         android:layout_weight="3"
                         android:id="@+id/last_homework"
-                        android:background="@drawable/inputbox"
+                        android:background="@drawable/input_box"
                         android:editable="false"
                         android:hint="这里显示最新的作业信息"
                         android:textSize="12sp"
@@ -86,28 +94,34 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp" />
 
+                <EditText
+                    android:id="@+id/homework_time_edit"
+                    android:singleLine="true"
+                    android:background="@drawable/text_box"
+                    android:hint="作业提交时间"
+                    android:textColor="#ffffff"
+                    android:maxLength="20"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <ScrollView
+                    android:layout_weight="3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp">
 
                     <EditText
-                        android:layout_weight="2"
-                        android:id="@+id/homework_time_edit"
-                        android:singleLine="true"
-                        android:background="@drawable/text_box"
-                        android:hint="作业提交时间"
-                        android:textColor="#ffffff"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp" />
 
-
-                    <EditText
-                        android:layout_weight="3"
                         android:id="@+id/homework_content_edit"
                         android:background="@drawable/text_box"
+                        android:gravity="start"
                         android:hint="作业内容"
                         android:textColor="#ffffff"
+                        android:minLines="10"
                         android:maxLength="200"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp" />
+                        android:layout_height="wrap_content" />
 
+                </ScrollView>
 
 
 
@@ -152,17 +166,26 @@
                     android:layout_height="0dp">
                 </ListView>
 
-                <EditText
-                    android:layout_marginTop="2dp"
-                    android:layout_weight="2"
-                    android:inputType="textMultiLine"
-                    android:gravity="left"
-                    android:id="@+id/talk_field"
-                    android:maxLength="140"
-                    android:background="@drawable/inputbox"
-                    android:hint="140个字想怎么吹怎么吹~"
+                <ScrollView
+                    android:layout_weight="3"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp" />
+                    android:layout_height="0dp">
+
+                    <EditText
+                        android:layout_marginTop="2dp"
+                        android:inputType="textMultiLine"
+                        android:gravity="left"
+                        android:id="@+id/talk_field"
+                        android:minLines="10"
+                        android:textColor="#ffffff"
+                        android:maxLength="140"
+                        android:background="@drawable/input_box"
+                        android:hint="140个字想怎么吹怎么吹~"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </ScrollView>
+
 
                 <Button
                     android:layout_weight="1"

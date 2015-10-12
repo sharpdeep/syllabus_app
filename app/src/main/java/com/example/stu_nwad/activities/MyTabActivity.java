@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -145,6 +146,8 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
         homework_submit_button.setOnClickListener(this);
         homework_history_button.setOnClickListener(this);
         submit_discussion_button.setOnClickListener(this);
+
+        homework_submit_button.setClickable(true);
     }
 
 
@@ -186,8 +189,12 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             // 个人信息
             case R.id.personal_submit:
-                save_comment();
-//                dismiss();
+                if (save_comment()){
+                    Toast.makeText(MyTabActivity.this, "保存成功~", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(MyTabActivity.this, "保存失败~", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
 
             // 作业信息
@@ -226,7 +233,7 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
         data.put("start_year", lesson.start_year + "");
         data.put("end_year", lesson.end_year + "");
         data.put("semester", lesson.semester + "");
-
+        return;
     }
 
 
@@ -269,6 +276,19 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void add_homework_to_database(){
+
+        String content = homework_content_edit.getText().toString().trim();
+        if (content.isEmpty()){
+            Toast.makeText(MyTabActivity.this, "不能发送空作业哟", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String hand_in_time = homework_time_edit.getText().toString().trim();
+        if (hand_in_time.isEmpty()){
+            Toast.makeText(MyTabActivity.this, "要填上上交的时间哟~~~", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         HashMap<String, String> data = new HashMap<>();
         // 对应到具体的课程
 
@@ -278,8 +298,11 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
         data.put("publisher", MainActivity.cur_username);
         long timestamp =  (System.currentTimeMillis() / 1000);
         data.put("pub_time", timestamp + "");  // 现在的时间
-        data.put("hand_in_time", homework_time_edit.getText().toString());
-        data.put("content", homework_content_edit.getText().toString().trim()); // 去除没必要的空白字符
+        data.put("hand_in_time", hand_in_time);
+        data.put("content", content); // 去除没必要的空白字符
+
+        // 添加hash_code
+        add_hash_code(data, MainActivity.cur_username + timestamp);
 
         InsertTask insert_homework_task = new InsertTask(this.getString(R.string.insert_home_work_api));
         insert_homework_task.execute(data);
@@ -291,6 +314,13 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
 //            self.parser.add_argument("content", required=True)
 
     public void add_discussion_to_database(){
+
+        String content = discussion_content_edit.getText().toString().trim();
+        if (content.isEmpty()){
+            Toast.makeText(MyTabActivity.this, "不能发空吐槽哟~~~", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         HashMap<String, String> data = new HashMap<>();
 
         // 对应到具体的课程
@@ -301,7 +331,10 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
         data.put("publisher", MainActivity.cur_username);
         long timestamp = (System.currentTimeMillis() / 1000);
         data.put("pub_time", timestamp + "");
-        data.put("content", discussion_content_edit.getText().toString());
+        data.put("content", content);
+
+        // 增加hash_code
+        add_hash_code(data, MainActivity.cur_username + timestamp);
 
         InsertDiscussionTask task = new InsertDiscussionTask(this.getString(R.string.insert_discussion_api));
         task.execute(data);
@@ -342,6 +375,10 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
             // 否则只是把 this.discussions 这个引用本身指向的地方改变了
             discussionAdapter.notifyDataSetChanged();
         }
+
+        // 确保最新的消息可见
+        if (this.discussions.size() > 0)
+            discussion_list_view.setSelection(this.discussions.size() - 1);
     }
 
     @Override
@@ -352,6 +389,34 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
         else if (tabId.equals(DISCUSS_TAB))
             get_latest_discussion(5);  // 显示10条吐槽信息
 
+    }
+
+    private static String my_hash(String input_string){
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            byte[] dataBytes;
+            dataBytes = input_string.getBytes("utf-8");
+            md.update(dataBytes);
+            byte[] mdbytes = md.digest();
+
+            //convert the byte to hex format method 1
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < mdbytes.length; i++) {
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    private static void add_hash_code(HashMap<String, String> data, String input_string){
+        String hash_code = my_hash(input_string);
+        if (hash_code != null)
+            data.put("code", hash_code);
     }
 
 
@@ -397,11 +462,17 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
                     }else if (error_string.equals(NO_SUCH_USER)){
                         // 说明要添加用户到数据库中
                         add_user_to_database();
+                    }else{
+                        // 就是 wrong code 的情况了
+                        return;
                     }
                     // 再试一次 应该就ok了
                     add_homework_to_database();
                 }else{
-                    Toast.makeText(MyTabActivity.this, "作业信息分享成功哟~~~~", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyTabActivity.this, "信息分享成功哟~~~~", Toast.LENGTH_SHORT).show();
+                    homework_content_edit.setText("");
+                    homework_time_edit.setText("");
+                    get_latest_homework(1);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -450,11 +521,16 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
                     }else if (error_string.equals(NO_SUCH_USER)){
                         // 说明要添加用户到数据库中
                         add_user_to_database();
+                    }else{
+                        // wrong code 的情况
+                        return;
                     }
                     // 再试一次 应该就ok了
                     add_discussion_to_database();
                 }else{
                     Toast.makeText(MyTabActivity.this, "吐槽成功", Toast.LENGTH_SHORT).show();
+                    discussion_content_edit.setText("");
+                    get_latest_discussion(5);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

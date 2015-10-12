@@ -22,7 +22,6 @@ public class SyllabusActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private TextView weekend_text;
     private TextView info_text;
-    private ClassDialog dialog;
 
     private void setupViews(){
         // 设置 RecyclerView

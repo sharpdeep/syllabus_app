@@ -30,7 +30,7 @@
                 android:id="@+id/username_edit"
                 android:hint="username"
                 android:singleLine="true"
-                android:background="@drawable/inputbox"
+                android:background="@drawable/input_box"
                 android:textColor="#ffff"
                 android:layout_margin="1dp"
                 android:layout_weight="6"
@@ -53,7 +53,7 @@
             <EditText
                 android:id="@+id/passwd_edit"
                 android:textColor="#ffff"
-                android:background="@drawable/inputbox"
+                android:background="@drawable/input_box"
                 android:layout_weight="6"
                 android:hint="password"
                 android:singleLine="true"
@@ -110,6 +110,7 @@
 
         <TextView
             android:textColor="#ffff"
+            android:id="@+id/about_text_box"
             android:gravity="center"
             android:background="@drawable/text_box"
             android:layout_gravity="center"
