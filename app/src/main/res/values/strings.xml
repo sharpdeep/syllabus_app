@@ -2,7 +2,8 @@
     <string name="app_name">汕大课程表</string>
     <string name="title_activity_syllabus">课程表</string>
     <string name="help_message">输入账号密码之后直接点击下面的学期即可查看课表</string>
-    <string name="about_message">Email: 14xfdeng@stu.edu.cn</string>
+    <string name="about_message">Email: 14xfdeng@stu.edu.cn\n
+                                 Email: 14jhwang@stu.edu.cn</string>
     <string name="server_address">http://10.22.27.65/syllabus</string>
     <string name="server_ip">10.22.27.65</string>
     <string name="server_ip_debug">192.168.1.100</string>

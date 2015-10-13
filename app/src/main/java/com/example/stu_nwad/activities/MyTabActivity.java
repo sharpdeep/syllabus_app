@@ -1,6 +1,5 @@
 package com.example.stu_nwad.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,13 +17,12 @@ import android.widget.Toast;
 import com.example.stu_nwad.adapters.DiscussionAdapter;
 import com.example.stu_nwad.syllabus.Discussion;
 import com.example.stu_nwad.syllabus.DiscussionHandler;
-import com.example.stu_nwad.syllabus.DiscussionPullTask;
 import com.example.stu_nwad.syllabus.FileOperation;
 import com.example.stu_nwad.syllabus.Homework;
 import com.example.stu_nwad.syllabus.HomeworkHandler;
 import com.example.stu_nwad.syllabus.HomeworkParser;
-import com.example.stu_nwad.syllabus.HomeworkPullTask;
 import com.example.stu_nwad.syllabus.HttpCommunication;
+import com.example.stu_nwad.syllabus.InfoPullTask;
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.syllabus.R;
 
@@ -48,6 +46,8 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
     public static final String PERSONAL_TAB = "personal";
     public static final String HOMEWORK_TAB = "homework";
     public static final String DISCUSS_TAB = "discuss";
+
+    private static int MESSAGE_COUNT = 10;
 
     // 个人备注区域
     private TextView class_info_text_view;
@@ -75,6 +75,8 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
     private TabHost.TabSpec homework_tab_content;
     private TabHost.TabSpec discuss_tab_content;
 
+    private InfoPullTask homework_pull_task;
+    private InfoPullTask discussion_pull_task;
 
     public void setLesson(Lesson lesson){
         this.lesson = lesson;
@@ -238,13 +240,18 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
 
 
     private void get_latest_homework(int count){
-        HomeworkPullTask get_homework_task = new HomeworkPullTask(this, this);
-        get_homework_task.get_homework(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
+//        HomeworkPullTask get_homework_task = new HomeworkPullTask(this, this);
+        // 不可复用 task
+        homework_pull_task = new InfoPullTask(this, InfoPullTask.PULL_HOMEWORK);
+        homework_pull_task.setHomeworkHandler(this);
+        homework_pull_task.get_information(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
     }
 
     private void get_latest_discussion(int count){
-        DiscussionPullTask get_discussion_task = new DiscussionPullTask(this, this);
-        get_discussion_task.get_discussion(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
+        // task 不可复用
+        discussion_pull_task = new InfoPullTask(this, InfoPullTask.PULL_DISCUSSION);
+        discussion_pull_task.setDiscussionHandler(this);
+        discussion_pull_task.get_information(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
     }
 
     private void add_lesson_to_database(){
@@ -387,7 +394,7 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
         if (tabId.equals(HOMEWORK_TAB))
             get_latest_homework(1);
         else if (tabId.equals(DISCUSS_TAB))
-            get_latest_discussion(5);  // 显示10条吐槽信息
+            get_latest_discussion(MESSAGE_COUNT);  // 显示10条吐槽信息
 
     }
 
@@ -427,14 +434,9 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
 
         private String address;
 
-        public InsertTask(String addr){
-            this.address = addr;
+        public InsertTask(String address){
+            this.address = address;
         }
-
-        public void setAddress(String addr){
-            this.address = addr;
-        }
-
 
 
         @Override
@@ -530,7 +532,7 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
                 }else{
                     Toast.makeText(MyTabActivity.this, "吐槽成功", Toast.LENGTH_SHORT).show();
                     discussion_content_edit.setText("");
-                    get_latest_discussion(5);
+                    get_latest_discussion(MESSAGE_COUNT);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

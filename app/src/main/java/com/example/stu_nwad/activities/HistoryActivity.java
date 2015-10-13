@@ -15,13 +15,11 @@ import android.widget.Toast;
 
 import com.example.stu_nwad.adapters.DiscussionAdapter;
 import com.example.stu_nwad.adapters.HomeworkAdapter;
-import com.example.stu_nwad.adapters.ListViewAdapter;
 import com.example.stu_nwad.syllabus.Discussion;
 import com.example.stu_nwad.syllabus.DiscussionHandler;
-import com.example.stu_nwad.syllabus.DiscussionPullTask;
 import com.example.stu_nwad.syllabus.Homework;
 import com.example.stu_nwad.syllabus.HomeworkHandler;
-import com.example.stu_nwad.syllabus.HomeworkPullTask;
+import com.example.stu_nwad.syllabus.InfoPullTask;
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.syllabus.R;
 
@@ -123,16 +121,18 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
 
         // Homework
         if (history_type_spinner.getSelectedItem().toString().equals(HISTORY_TYPES[0])){
-            HomeworkPullTask task = new HomeworkPullTask(this, this);
+            InfoPullTask task = new InfoPullTask(this, InfoPullTask.PULL_HOMEWORK);
+            task.setHomeworkHandler(this);
             Lesson lesson = MyTabActivity.lesson;
-            task.get_homework(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
+            task.get_information(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
         }
 
         // Discussions
         if (history_type_spinner.getSelectedItem().toString().equals(HISTORY_TYPES[1])){
-            DiscussionPullTask discussionPullTask = new DiscussionPullTask(this, this);
+            InfoPullTask task = new InfoPullTask(this, InfoPullTask.PULL_DISCUSSION);
+            task.setDiscussionHandler(this);
             Lesson lesson = MyTabActivity.lesson;
-            discussionPullTask.get_discussion(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
+            task.get_information(count, lesson.id, lesson.start_year, lesson.end_year, lesson.semester);
         }
     }
 

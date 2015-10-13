@@ -7,6 +7,8 @@ import android.util.Log;
 import com.example.stu_nwad.activities.MainActivity;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -83,7 +85,11 @@ public class InfoPullTask extends AsyncTask<HashMap<String, String>, Void, Strin
 
         if (discussionHandler != null){
             DiscussionParser discussionParser = new DiscussionParser(context);
-            discussionHandler.deal_with_discussion(discussionParser.parse_json(response));
+            ArrayList<Discussion> all_discussions = discussionParser.parse_json(response);
+            if (all_discussions != null){
+                Collections.reverse(all_discussions);
+            }
+            discussionHandler.deal_with_discussion(all_discussions);
             return;
         }
     }
