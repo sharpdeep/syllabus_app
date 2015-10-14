@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String USERNAME_FILE = "username.txt";
     public static final String PASSWORD_FILE = "password.txt";
 
+
     // 用于和其他activity共享的数据
     public static String cur_year_string;
     public static int cur_semester;
@@ -51,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText passwd_edit;
     private ListView syllabus_list_view;    // 用于显示所有课表的listview
 
+    // 如果已经显示过默认课表就没必要再显示了
+    private boolean has_showed_default = false;
+
     // 创建主界面
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
         YEARS = generate_years(4);  // 生成5年的选项
         getAllViews();
         setupViews();
+        if (!has_showed_default)
+            load_default_syllabus();
+
     }
 
 
@@ -95,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "用户文件不存在");
         }
 
-        // debug
+        // show my words
         TextView about_text = (TextView) findViewById(R.id.about_text_box);
         about_text.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,6 +140,15 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.check_update_action){
             Intent update_activity = new Intent(this, UpdateActivity.class);
             startActivity(update_activity);
+            return true;
+        }
+
+        if (id == R.id.delete_default_syllabus){
+            if (delete_default_syllabus())
+                Toast.makeText(MainActivity.this, "清除了默认课表的设置", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(MainActivity.this, "清除默认课表出错", Toast.LENGTH_SHORT).show();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -150,6 +166,36 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "deleted " + filename );
                 else
                     Log.d(TAG, "delete[failed]" + filename);
+            }
+        }
+    }
+
+    private boolean delete_default_syllabus(){
+        if (FileOperation.hasFile(this, SyllabusActivity.DEFAULT_SYLLABUS_FILE))
+            return FileOperation.delete_file(this, SyllabusActivity.DEFAULT_SYLLABUS_FILE);
+        return true;
+    }
+
+    private void load_default_syllabus(){
+        String default_file_name = FileOperation.read_from_file(this, SyllabusActivity.DEFAULT_SYLLABUS_FILE);
+        if (default_file_name != null){
+            if (FileOperation.hasFile(this, default_file_name)){
+                String json_data = FileOperation.read_from_file(this, default_file_name);
+                if (json_data != null){
+                    SyllabusGetter syllabusGetter = new SyllabusGetter(getString(R.string.server_address));
+                    // 设置一些相关信息
+                    String[] info = default_file_name.split("_");
+                    cur_username = info[0];
+                    cur_year_string = info[1];
+                    cur_semester = FileOperation.semester_to_int(info[2]);
+                    for(int i = 0 ; i < YEARS.length ; ++i)
+                        if (cur_year_string.equals(YEARS[i]))
+                            position = i;
+                    info_about_syllabus = cur_username + " " + cur_year_string + " " + info[2];
+                    has_showed_default = true;
+                    syllabusGetter.apply_json(json_data);
+                    return;
+                }
             }
         }
     }
@@ -232,6 +278,8 @@ public class MainActivity extends AppCompatActivity {
             submit(position, v.getId());
         }
     }
+
+    
 
     /**
      * 用于异步发送网络请求

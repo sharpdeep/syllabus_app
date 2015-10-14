@@ -1,5 +1,6 @@
 package com.example.stu_nwad.activities;
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -7,8 +8,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.stu_nwad.adapters.RecyclerAdapter;
+import com.example.stu_nwad.helpers.FileOperation;
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.syllabus.R;
 
@@ -16,6 +19,8 @@ import com.example.stu_nwad.syllabus.R;
 public class SyllabusActivity extends AppCompatActivity {
 
     public static Lesson clicked_lesson;
+
+    public static final String DEFAULT_SYLLABUS_FILE = "default_syllabus";
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -43,7 +48,7 @@ public class SyllabusActivity extends AppCompatActivity {
             for(Lesson lesson : MainActivity.weekends_syllabus_data)
                 text += lesson.toText() + "\n";
         }else{
-            text = "周末课程信息: 周末没有课~";
+            text = "周末课程信息: 周末没有课";
         }
         weekend_text.setText(text);
 
@@ -56,7 +61,9 @@ public class SyllabusActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_syllabus);
         setupViews();
-        getSupportActionBar().setTitle(MainActivity.info_about_syllabus);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setTitle(MainActivity.info_about_syllabus);
     }
 
     public void showClassInfo(Lesson lesson){
@@ -81,7 +88,27 @@ public class SyllabusActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()){
+            case R.id.set_default_syllabus:
+                if (set_default_syllabus()){
+                    Toast.makeText(SyllabusActivity.this, "成功设置默认课表~~~~", Toast.LENGTH_SHORT).show();
+                    return true;
+                }else
+                    return false;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    /**
+     * 设置默认学期
+     */
+    private boolean set_default_syllabus(){
+        String syllabus_file_name =  FileOperation.generate_syllabus_file_name(MainActivity.cur_username, MainActivity.cur_year_string,
+                MainActivity.cur_semester, "_");
+        return FileOperation.save_to_file(this, DEFAULT_SYLLABUS_FILE, syllabus_file_name);
+
     }
 
 

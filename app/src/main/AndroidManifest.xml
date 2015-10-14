@@ -28,7 +28,7 @@
         <activity
             android:name="com.example.stu_nwad.activities.MyTabActivity"
             android:label="具体信息"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name="com.example.stu_nwad.activities.HistoryActivity"
