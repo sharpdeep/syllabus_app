@@ -27,19 +27,26 @@ public class VersionParser {
         JSONTokener json_parser = new JSONTokener(json_data);
         try {
             JSONObject version_json = (JSONObject) json_parser.nextValue();
+            // 版本号
             int version_code = version_json.getInt("versionCode");
+            // 版本名
             String version_name = version_json.getString("versionName");
+            // 描述
             String description = version_json.getString("versionDescription");
-
+            // 发布者
             String version_publisher = version_json.getString("versionReleaser");
+            // 发布日期
             long pub_date = version_json.getLong("versionDate");
-
+            // 下载地址
             String download = version_json.getString("download_address");
+            // 文件名
+            String file_name = version_json.getString("apk_file_name");
 
             SyllabusVersion version = new SyllabusVersion(version_code, version_name, description);
             version.version_releaser = version_publisher;
             version.version_release_date = pub_date;
             version.dowload_address = download;
+            version.apk_file_name = file_name;
             return version;
         } catch (JSONException e) {
             Toast.makeText(context, "版本信息解析失败", Toast.LENGTH_SHORT).show();

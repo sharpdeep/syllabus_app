@@ -77,7 +77,7 @@ public class UpdateActivity extends AppCompatActivity implements UpdateHandler, 
     }
 
     private void download_apk(String address){
-        updateHelper.download(address);
+        updateHelper.download(address, remote_version);
     }
 
     private void get_current_version(){
@@ -131,7 +131,7 @@ public class UpdateActivity extends AppCompatActivity implements UpdateHandler, 
                 if (version_state == UpdateHandler.EXIST_UPDATE){
                     if (remote_version != null)
                         download_apk(remote_version.dowload_address);
-                    Toast.makeText(UpdateActivity.this, "下载更新ing~~~~", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateActivity.this, "开始下载文件", Toast.LENGTH_SHORT).show();
                 }else if (version_state == UpdateHandler.ALREADY_UPDATED){
                     Toast.makeText(UpdateActivity.this, "已经是最新版本啦~~~~", Toast.LENGTH_SHORT).show();
                 }else if (version_state == UpdateHandler.CONNECTION_ERROR){

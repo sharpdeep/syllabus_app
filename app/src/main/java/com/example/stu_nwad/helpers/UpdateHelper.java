@@ -75,9 +75,9 @@ public class UpdateHelper {
         task.execute();
     }
 
-    public void download(String address){
+    public void download(String address, SyllabusVersion version){
         Download task = new Download(address);
-        task.execute();
+        task.execute(version);
     }
 
     /**
@@ -119,7 +119,7 @@ public class UpdateHelper {
     /**
      * 下载文件
      */
-    class Download extends AsyncTask<Void, Void, File>{
+    class Download extends AsyncTask<SyllabusVersion, Void, File>{
 
         private String address;
 
@@ -128,7 +128,8 @@ public class UpdateHelper {
         }
 
         @Override
-        protected File doInBackground(Void... params) {
+        protected File doInBackground(SyllabusVersion... params) {
+            SyllabusVersion version = params[0];
             // SD 卡是否存在，和是否具有读写权限
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
                 String sd_path = Environment.getExternalStorageDirectory() + "/";
@@ -148,7 +149,7 @@ public class UpdateHelper {
                     if (!dir_path.exists())
                         dir_path.mkdir();
 
-                    File apk_file = new File(file_save_path, "syllabus.apk");
+                    File apk_file = new File(file_save_path, version.apk_file_name);
                     FileOutputStream fos = new FileOutputStream(apk_file);
 
                     byte[] buf = new byte[1024 * 4];

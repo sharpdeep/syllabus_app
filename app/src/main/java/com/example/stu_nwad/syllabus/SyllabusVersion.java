@@ -20,6 +20,7 @@ public class SyllabusVersion {
     public long version_release_date = -1;   // 发布日期
     public String version_releaser = "";  // 发布者
     public String dowload_address = "";
+    public String apk_file_name = "";
 
     public SyllabusVersion(){
         version_code = -1;
