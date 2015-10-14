@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.stu_nwad.activities.MainActivity;
+import com.example.stu_nwad.syllabus.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -142,6 +143,25 @@ public class FileOperation {
         else if (semester.equals("SUMMER"))
             return 3;
         return -1;
+    }
+
+    public static String semester_from_view_id(int id){
+        String semester;
+        switch (id){
+            case R.id.spring_text_view:
+                semester = "SPRING";
+                break;
+            case R.id.summer_text_view:
+                semester = "SUMMER";
+                break;
+            case R.id.autumn_text_view:
+                semester = "AUTUMN";
+                break;
+            default:
+                semester = "";
+                break;
+        }
+        return semester;
     }
 
 }

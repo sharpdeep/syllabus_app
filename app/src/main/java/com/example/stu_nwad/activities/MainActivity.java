@@ -1,5 +1,7 @@
 package com.example.stu_nwad.activities;
-
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -13,19 +15,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.stu_nwad.adapters.ListViewAdapter;
+import com.example.stu_nwad.helpers.UpdateHelper;
+import com.example.stu_nwad.interfaces.UpdateHandler;
 import com.example.stu_nwad.parsers.ClassParser;
 import com.example.stu_nwad.helpers.FileOperation;
 import com.example.stu_nwad.helpers.HttpCommunication;
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.syllabus.R;
+import com.example.stu_nwad.syllabus.SyllabusVersion;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
 
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements UpdateHandler {
     public static Object[] weekdays_syllabus_data;     // 用于向显示课表的activity传递数据
     public static ArrayList<Lesson> weekends_syllabus_data;
     public static String info_about_syllabus;
@@ -54,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
 
     // 如果已经显示过默认课表就没必要再显示了
     private boolean has_showed_default = false;
+    private boolean has_checked_update = false;
+
+    private UpdateHelper updateHelper;
 
     // 创建主界面
     @Override
@@ -65,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
         setupViews();
         if (!has_showed_default)
             load_default_syllabus();
+        // 检查更新
+        if (!has_checked_update)
+            check_update();
 
     }
 
@@ -124,18 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-
-        if (id == R.id.delete_action) {
-            delete_cached_files();
-            Toast.makeText(MainActivity.this, "已经清空所有缓存文件", Toast.LENGTH_SHORT).show();
-            return true;
-        }
 
         if (id == R.id.check_update_action){
             Intent update_activity = new Intent(this, UpdateActivity.class);
@@ -154,21 +153,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void delete_cached_files(){
-        String filename;
-        String username = username_edit.getText().toString();
-        // 删除全部缓存文件
-        for(int i = 0 ; i < YEARS.length ; ++ i){
-            for(int j = 0 ; j < SEMESTER.length ; ++j){
-                filename = FileOperation.generate_syllabus_file_name(username, YEARS[i], SEMESTER[j], "_");
-                Log.d(TAG, "deleting " + filename);
-                if (FileOperation.delete_file(this, filename))
-                    Log.d(TAG, "deleted " + filename );
-                else
-                    Log.d(TAG, "delete[failed]" + filename);
-            }
-        }
-    }
 
     private boolean delete_default_syllabus(){
         if (FileOperation.hasFile(this, SyllabusActivity.DEFAULT_SYLLABUS_FILE))
@@ -259,6 +243,40 @@ public class MainActivity extends AppCompatActivity {
         syllabusGetter.execute(postData);
     }
 
+    private void check_update(){
+        if (updateHelper == null)
+            updateHelper = new UpdateHelper(this, this);
+        updateHelper.check_for_update();
+        has_checked_update = true;
+    }
+
+
+    @Override
+    public void deal_with_update(int flag, final SyllabusVersion version) {
+        if (flag == UpdateHandler.EXIST_UPDATE){
+            // 存在更新的话
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("发现新版本, 是否更新?");
+            builder.setMessage("描述:\n" + version.description);
+            builder.setPositiveButton("更新", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+//                    Intent update_activity = new Intent(MainActivity.this, UpdateActivity.class);
+//                    startActivity(update_activity);
+                    updateHelper.download(version.dowload_address, version);
+//                    dialog.dismiss();
+                }
+            });
+            builder.setNegativeButton("稍后", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create().show();
+        }
+    }
+
 
     // 获取内部类的实例
     public ShowSyllabus getOnClickListener(int position){
@@ -279,7 +297,57 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    
+    public LongTimeClickListener getOnLongClickListener(int position){
+        return new LongTimeClickListener(position);
+    }
+
+    public class LongTimeClickListener implements View.OnLongClickListener{
+
+        private int position;
+
+        public LongTimeClickListener(int pos){
+            this.position = pos;
+        }
+
+        private void delete_cache_file(Context context, String file_name){
+            if (FileOperation.hasFile(context, file_name)){
+                if (FileOperation.delete_file(context, file_name))
+                    Toast.makeText(context, "成功删除缓存文件", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(context, "删除缓存文件失败", Toast.LENGTH_SHORT).show();
+            }else
+                Toast.makeText(context, "不存在该缓存文件", Toast.LENGTH_SHORT).show();
+
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            final int id = v.getId();
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("清除缓存文件");
+            TextView text = (TextView) v;
+            builder.setMessage("清除 " + YEARS[position] + " " + text.getText().toString().replace("\n", "") + " 课表?");
+            builder.setPositiveButton("清除", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+//                    Toast.makeText(MainActivity.this, "清除缓存文件", Toast.LENGTH_SHORT).show();
+                    String username = username_edit.getText().toString();
+                    String semester = FileOperation.semester_from_view_id(id);
+                    String file_name = FileOperation.generate_syllabus_file_name(username, YEARS[position], semester, "_");
+                    delete_cache_file(MainActivity.this, file_name);
+                    dialog.dismiss();
+                }
+            });
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create().show();
+            return true;
+        }
+    }
 
     /**
      * 用于异步发送网络请求
@@ -298,8 +366,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected String doInBackground(HashMap<String, String>... params) {
                 Log.d(TAG, "Doing now");
-                String  response = HttpCommunication.performPostCall(requestURL, params[0]);
-                return response;
+                return HttpCommunication.performPostCall(requestURL, params[0]);
             }
 
         /**

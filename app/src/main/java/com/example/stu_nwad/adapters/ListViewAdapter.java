@@ -76,9 +76,16 @@ public class ListViewAdapter extends BaseAdapter {
 
             MainActivity mainActivity = (MainActivity) context;
             View.OnClickListener listener = mainActivity.getOnClickListener(position);
+            View.OnLongClickListener longClickListener = mainActivity.getOnLongClickListener(position);
+
             holder.spring_text.setOnClickListener(listener);
             holder.summer_text.setOnClickListener(listener);
             holder.autumn_text.setOnClickListener(listener);
+
+            holder.spring_text.setOnLongClickListener(longClickListener);
+            holder.summer_text.setOnLongClickListener(longClickListener);
+            holder.autumn_text.setOnLongClickListener(longClickListener);
+
             convertView.setTag(holder);
         }else{  // 即之前缓存过的
             holder = (ViewHolder) convertView.getTag();
