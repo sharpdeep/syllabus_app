@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_margin="2dp"
         android:orientation="vertical"
-        android:background="@drawable/text_box"
+        android:background="@drawable/input_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

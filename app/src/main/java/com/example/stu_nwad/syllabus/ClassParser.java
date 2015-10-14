@@ -163,6 +163,23 @@ public class ClassParser {
 //        Log.d(MainActivity.TAG, "end init()");
     }
 
+    private int change_into_number(char c){
+        int num;
+        switch (c){
+            case '0':
+                num = 10;
+                break;
+            case 'A':
+            case 'B':
+            case 'C':
+                num = ( c - 'A' ) + 11;
+                break;
+            default:
+                num = c - '0';
+                break;
+        }
+        return num;
+    }
 
     /**
      * 用解析得到的课程填充 weekdays_syllabus_data
@@ -218,7 +235,20 @@ public class ClassParser {
                             weekdays_syllabus_data[index] = lesson;   // 将这节课添加到合适的位置
                             hasBeenAdded = true;
                         }else{
-                            weekdays_syllabus_data[index] = "同上";
+                            // 找前一个位置
+                            char pre_char = count == 0 ? 0 : class_time.charAt(count - 1);
+                            if (pre_char > 0){
+                                // 这里也要注意 90 这种情况 要把 0 转化为 10 , A 11 B 12 C 13
+                                int pre_row = change_into_number(pre_char);
+                                int diff = row - pre_row;
+                                if (diff != 1) {  // 不相邻，如整合思维 一天三节课但是 大班课 不相邻
+//                                    Toast.makeText(context, "the difference is" + diff, Toast.LENGTH_SHORT).show();
+                                    weekdays_syllabus_data[index] = lesson;
+                                    continue;
+                                }
+                                weekdays_syllabus_data[index] = "同上";
+                            }
+
                         }
 
                     }

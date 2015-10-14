@@ -33,7 +33,7 @@ public class Lesson {
         if (s_index != -1){
             name_without_prefix = name.substring(s_index + 1);
         }
-        return name_without_prefix + "[" + room + "]" /* + days.toString() */;
+        return name_without_prefix + "@" + room + "" /* + days.toString() */;
     }
 
     // 用于表现这个课程的完整信息

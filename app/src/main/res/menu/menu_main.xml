@@ -5,8 +5,12 @@
     <item
         android:title="清除缓存文件"
         android:id="@+id/delete_action"
-        app:showAsAction="never"
-        >
+        app:showAsAction="never"/>
 
-    </item>
+
+    <item
+        android:id="@+id/check_update_action"
+        android:title="检查更新"
+        app:showAsAction="never"/>
+
 </menu>

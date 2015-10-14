@@ -14,9 +14,13 @@
     <string name="insert_user_api">http://10.22.27.65/api/user</string>
     <string name="insert_home_work_api">http://10.22.27.65/api/homework</string>
     <string name="insert_discussion_api">http://10.22.27.65/api/discuss</string>
+    <string name="version_control_address">http://10.22.27.65/api/version</string>
     <string name="title_activity_history">历史记录</string>
     <string name="title_activity_about">Small Fly\'s Words</string>
     <string name="action_settings">Settings</string>
+
+    <string name="version_code">1</string>
+    <string name="version_name">beta1.0</string>
 
     <string name="about_information">
         一直在想关于汕大的APP比较少，
