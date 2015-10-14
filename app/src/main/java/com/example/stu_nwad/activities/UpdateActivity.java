@@ -17,6 +17,8 @@ import com.example.stu_nwad.syllabus.SyllabusVersion;
 public class UpdateActivity extends AppCompatActivity implements UpdateHandler, View.OnClickListener {
 
     private int version_state;
+    private UpdateHelper updateHelper;
+    private SyllabusVersion remote_version;
 
     // views
     private TextView cur_version_text;
@@ -39,8 +41,11 @@ public class UpdateActivity extends AppCompatActivity implements UpdateHandler, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
+        updateHelper = new UpdateHelper(this, this);
+
         find_views();
         setup_views();
+
         get_current_version();
         check_update();
     }
@@ -68,8 +73,11 @@ public class UpdateActivity extends AppCompatActivity implements UpdateHandler, 
     }
 
     private void check_update(){
-        UpdateHelper updateHelper = new UpdateHelper(this, this);
         updateHelper.check_for_update();
+    }
+
+    private void download_apk(String address){
+        updateHelper.download(address);
     }
 
     private void get_current_version(){
@@ -101,12 +109,15 @@ public class UpdateActivity extends AppCompatActivity implements UpdateHandler, 
         // 存在更新
         if (flag == UpdateHandler.EXIST_UPDATE){
             new_version_text.setText("[新版本信息]:\n版本名称: " + version.version_name + "\n发布者: " + version.version_releaser + "\n描述: " + version.description);
+            remote_version = version;
             update_button.setText("发现新版本!快点我更新!");
         }else if (flag == UpdateHandler.ALREADY_UPDATED){
             new_version_text.setText("已经是最新版本啦!");
+            remote_version = null;
             update_button.setText("已经是最新版本啦!");
         }else if (flag == UpdateHandler.CONNECTION_ERROR){
             new_version_text.setText("没有成功连接到服务器");
+            remote_version = null;
             update_button.setText("点我重试检查更新");
         }
     }
@@ -118,6 +129,8 @@ public class UpdateActivity extends AppCompatActivity implements UpdateHandler, 
         switch (v.getId()){
             case R.id.update_button:
                 if (version_state == UpdateHandler.EXIST_UPDATE){
+                    if (remote_version != null)
+                        download_apk(remote_version.dowload_address);
                     Toast.makeText(UpdateActivity.this, "下载更新ing~~~~", Toast.LENGTH_SHORT).show();
                 }else if (version_state == UpdateHandler.ALREADY_UPDATED){
                     Toast.makeText(UpdateActivity.this, "已经是最新版本啦~~~~", Toast.LENGTH_SHORT).show();

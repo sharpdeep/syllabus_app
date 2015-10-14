@@ -3,6 +3,8 @@
     android:versionCode="1"
     android:versionName="@string/version_name"
     package="com.example.stu_nwad.syllabus" >
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
