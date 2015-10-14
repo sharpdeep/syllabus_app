@@ -1,7 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/wallpaper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.stu_nwad.activities.HistoryActivity">
@@ -22,9 +21,9 @@
         <EditText
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:textColor="#ffffff"
+            android:textColor="#2b2b2b"
             android:id="@+id/history_count_edit"
-            android:hint="查看历史纪录数量"
+            android:hint="查看历史记录数量"
             android:inputType="number"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />

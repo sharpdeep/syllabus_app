@@ -1,9 +1,12 @@
 package com.example.stu_nwad.helpers;
 
 import android.content.Context;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 import com.example.stu_nwad.activities.MainActivity;
+import com.example.stu_nwad.activities.SyllabusActivity;
 import com.example.stu_nwad.syllabus.R;
 
 import java.io.ByteArrayOutputStream;
@@ -12,12 +15,78 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
  * 处理文件的存储与读取
  */
 public class FileOperation {
+
+    public static final String APP_FOLDER = "Syllabus";
+
+    public static String get_app_folder(boolean with_slash){
+        if (with_slash)
+            return Environment.getExternalStorageDirectory() + "/" + APP_FOLDER + "/";
+        else
+            return Environment.getExternalStorageDirectory() + "/" + APP_FOLDER;
+    }
+
+    public static boolean is_sd_mounted(){
+        String status = Environment.getExternalStorageState();
+        // sd 卡装载好 而且有读写权限。
+        return status.equals(Environment.MEDIA_MOUNTED);
+    }
+
+    public static boolean create_app_folder(){
+        if (is_sd_mounted()) {
+            String base_dir = Environment.getExternalStorageDirectory() + "/" + APP_FOLDER;
+            File dir = new File(base_dir);
+            if (!dir.exists())
+                return dir.mkdir();
+            else
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean copy_file(File from, File to){
+        try {
+            InputStream in = new FileInputStream(from);
+            OutputStream out = new FileOutputStream(to);
+            byte[] buf = new byte[1024];
+            int numread;
+            while ((numread = in.read(buf)) > 0){
+                out.write(buf, 0, numread);
+            }
+            in.close();
+            out.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
+
+    public static Uri getTempUri(){
+        String status = Environment.getExternalStorageState();
+        // 已挂载而且有读写权限
+        if (status.equals(Environment.MEDIA_MOUNTED)){
+            File f = new File(get_app_folder(true)+ SyllabusActivity.WALL_PAPER_FILE_TEMP);
+            try {
+                f.createNewFile();
+                return Uri.fromFile(f);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
+    }
 
     public static String generate_syllabus_file_name(String username, String year, String semester, String sep){
         return username + sep + year + sep + semester;

@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.stu_nwad.userecyclerview"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 23
     }
     buildTypes {

@@ -51,7 +51,7 @@
 
                 <Button
                     android:id="@+id/personal_submit"
-                    android:text="提交"
+                    android:text="保存"
                     android:layout_weight="1"
                     android:background="@drawable/text_box"
                     android:layout_width="match_parent"
@@ -160,14 +160,14 @@
 
                 <ListView
                     android:background="@drawable/text_box"
-                    android:layout_weight="3"
+                    android:layout_weight="6"
                     android:id="@+id/discuss_list_view"
                     android:layout_width="match_parent"
                     android:layout_height="0dp">
                 </ListView>
 
                 <ScrollView
-                    android:layout_weight="3"
+                    android:layout_weight="4"
                     android:layout_width="match_parent"
                     android:layout_height="0dp">
 
@@ -186,13 +186,29 @@
 
                 </ScrollView>
 
-
-                <Button
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_weight="1"
-                    android:id="@+id/submit_discussion_button"
-                    android:text="提交"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp" />
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:layout_weight="1"
+                        android:id="@+id/submit_discussion_button"
+                        android:text="提交"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                    <Button
+                        android:layout_weight="1"
+                        android:id="@+id/discuss_history_button"
+                        android:layout_width="0dp"
+                        android:text="历史"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
+
+
 
 
 

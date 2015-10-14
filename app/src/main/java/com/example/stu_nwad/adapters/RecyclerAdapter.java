@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.activities.SyllabusActivity;
+import com.example.stu_nwad.syllabus.R;
+
+import java.util.ArrayList;
 
 /**
  * Created by STU_nwad on 2015/9/23.
@@ -17,6 +20,12 @@ import com.example.stu_nwad.activities.SyllabusActivity;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     private Object[] mDataset;
     private SyllabusActivity syllabusActivity;
+
+    private int text_color = Color.WHITE;
+
+    public void set_color(int color){
+        text_color = color;
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -30,6 +39,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             mTextView = v;
         }
     }
+
+    private ArrayList<ViewHolder> all_view_holders = new ArrayList<>();
+
+    public void set_text_color(int color){
+        for(ViewHolder vh: all_view_holders){
+            vh.mTextView.setTextColor(color);
+        }
+    }
+
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public RecyclerAdapter(Object[] myDataset, SyllabusActivity syllabusActivity) {
@@ -49,6 +67,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 //        TextView text_view = (TextView) v.findViewById(R.id.class_grid_text);
 
         ViewHolder vh = new ViewHolder((TextView) v);
+        vh.mTextView.setTextColor(text_color);
+        all_view_holders.add(vh);
         return vh;
     }
 
@@ -60,18 +80,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         if (mDataset[position] instanceof Lesson){
 //            Log.d("GRID_VIEW", "[" + position + "]" + (position / ClassParser.COLUMNS) + "行" + (position % ClassParser.COLUMNS) + "列");
             holder.mTextView.setOnClickListener(new ClickAndShow(position));
-//            holder.mTextView.setBackgroundResource(R.drawable.input_box);
+            holder.mTextView.setBackgroundResource(R.drawable.input_box);
 
         }
-// else{
-//            holder.mTextView.setBackgroundResource(0);
-//        }
+ else{
+            holder.mTextView.setBackgroundResource(0);
+        }
         holder.mTextView.setText(mDataset[position].toString());
         holder.mTextView.setClickable(true);
         holder.mTextView.setTextSize(12);
-        holder.mTextView.setTextColor(Color.WHITE);
+        holder.mTextView.setTextColor(text_color);
 
-        holder.mTextView.setGravity(Gravity.CENTER);
+//        holder.mTextView.setGravity(Gravity.CENTER);
 
     }
 

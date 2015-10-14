@@ -47,7 +47,7 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
     public static final String HOMEWORK_TAB = "homework";
     public static final String DISCUSS_TAB = "discuss";
 
-    private static int MESSAGE_COUNT = 10;
+    private static int MESSAGE_COUNT = 15;
 
     // 个人备注区域
     private TextView class_info_text_view;
@@ -65,7 +65,9 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
     // 吹水区
     private ListView discussion_list_view;
     private Button submit_discussion_button;
+    private Button discussion_history_button;
     private EditText discussion_content_edit;
+
 
     private ArrayList<Discussion> discussions;
     private DiscussionAdapter discussionAdapter;
@@ -113,6 +115,7 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
         discussion_list_view = (ListView) tabHost.findViewById(R.id.discuss_list_view);
         discussion_content_edit = (EditText) tabHost.findViewById(R.id.talk_field);
         submit_discussion_button = (Button) tabHost.findViewById(R.id.submit_discussion_button);
+        discussion_history_button = (Button) tabHost.findViewById(R.id.discuss_history_button);
     }
 
     private void setup_views(){
@@ -148,7 +151,7 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
         homework_submit_button.setOnClickListener(this);
         homework_history_button.setOnClickListener(this);
         submit_discussion_button.setOnClickListener(this);
-
+        discussion_history_button.setOnClickListener(this);
         homework_submit_button.setClickable(true);
     }
 
@@ -207,6 +210,11 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
             // 作业历史
             case R.id.homework_history_button:
                 show_history_activity(HistoryActivity.HISTORY_TYPES[0]);
+                break;
+
+            // 吹水历史
+            case R.id.discuss_history_button:
+                show_history_activity(HistoryActivity.HISTORY_TYPES[1]);
                 break;
 
             // 添加讨论信息到相应课程
