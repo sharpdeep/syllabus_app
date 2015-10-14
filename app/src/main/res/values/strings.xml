@@ -19,8 +19,13 @@
     <string name="title_activity_about">Small Fly\'s Words</string>
     <string name="action_settings">Settings</string>
 
+    <string name="updated_text">正在检查更新</string>
+    <string name="outdated_text">已经有新版本发布啦，还在等什么，快点我!!!</string>
+
+
     <string name="version_code">1</string>
     <string name="version_name">beta1.0</string>
+    <string name="releaser">smallfly</string>
 
     <string name="about_information">
         一直在想关于汕大的APP比较少，
@@ -33,5 +38,8 @@
         基本功能都okay了，但是因为时间匆忙，还有诸多不完善的地方，如果
         大家有任何想法和建议都可以通过邮件发给我。希望这是一个能够长期驻扎于你手机的应用
         : ) 2015-10-12 By 晓拂</string>
+    <string name="title_activity_update">更新界面</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

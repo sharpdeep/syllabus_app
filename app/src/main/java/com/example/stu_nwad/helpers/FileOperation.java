@@ -1,4 +1,4 @@
-package com.example.stu_nwad.syllabus;
+package com.example.stu_nwad.helpers;
 
 import android.content.Context;
 import android.util.Log;

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-
-
+    android:versionCode="1"
+    android:versionName="@string/version_name"
     package="com.example.stu_nwad.syllabus" >
-
     <uses-permission android:name="android.permission.INTERNET" />
-
-
 
     <application
         android:allowBackup="true"
@@ -38,6 +35,10 @@
         <activity
             android:name="com.example.stu_nwad.activities.AboutActivity"
             android:label="@string/title_activity_about" >
+        </activity>
+        <activity
+            android:name="com.example.stu_nwad.activities.UpdateActivity"
+            android:label="@string/title_activity_update" >
         </activity>
     </application>
 

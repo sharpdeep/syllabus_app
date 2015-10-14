@@ -8,8 +8,6 @@ android {
         applicationId "com.example.stu_nwad.userecyclerview"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
     }
     buildTypes {
         release {

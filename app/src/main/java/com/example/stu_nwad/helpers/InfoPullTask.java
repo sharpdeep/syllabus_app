@@ -1,10 +1,16 @@
-package com.example.stu_nwad.syllabus;
+package com.example.stu_nwad.helpers;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.stu_nwad.activities.MainActivity;
+import com.example.stu_nwad.interfaces.DiscussionHandler;
+import com.example.stu_nwad.interfaces.HomeworkHandler;
+import com.example.stu_nwad.parsers.HomeworkParser;
+import com.example.stu_nwad.syllabus.Discussion;
+import com.example.stu_nwad.syllabus.DiscussionParser;
+import com.example.stu_nwad.syllabus.R;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -67,7 +73,7 @@ public class InfoPullTask extends AsyncTask<HashMap<String, String>, Void, Strin
         try {
             String query_string = HttpCommunication.get_url_encode_string(params[0]);
             Log.d(MainActivity.TAG, query_string);
-            return HttpCommunication.perform_get_call(host_address + "?" + query_string);
+            return HttpCommunication.perform_get_call(host_address + "?" + query_string, 3000);
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

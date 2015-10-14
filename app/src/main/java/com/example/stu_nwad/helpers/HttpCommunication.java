@@ -1,4 +1,4 @@
-package com.example.stu_nwad.syllabus;
+package com.example.stu_nwad.helpers;
 import android.util.Log;
 
 import com.example.stu_nwad.activities.MainActivity;
@@ -24,7 +24,12 @@ public class HttpCommunication {
 
     public static int timeout = 3000; // 3s
 
-    public static String perform_get_call(String hostaddr){
+    /**
+     * 访问远程网站，获取信息
+     * @param hostaddr 远程地址
+     * @return "" 或者具体的内容
+     */
+    public static String perform_get_call(String hostaddr, int timeout){
         URL url;
         String response = "";
 
@@ -42,12 +47,12 @@ public class HttpCommunication {
                 while ((line=br.readLine()) != null) {
                     response+=line;
                 }
-                Log.d(MainActivity.TAG, "POST CALL OK");
+                Log.d(MainActivity.TAG, "GET CALL OK");
 
             }
             else {
                 response = "";
-                Log.d(MainActivity.TAG, "POST CALL BAD");
+                Log.d(MainActivity.TAG, "GET CALL BAD");
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();

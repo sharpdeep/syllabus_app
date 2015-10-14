@@ -13,9 +13,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.stu_nwad.adapters.ListViewAdapter;
-import com.example.stu_nwad.syllabus.ClassParser;
-import com.example.stu_nwad.syllabus.FileOperation;
-import com.example.stu_nwad.syllabus.HttpCommunication;
+import com.example.stu_nwad.parsers.ClassParser;
+import com.example.stu_nwad.helpers.FileOperation;
+import com.example.stu_nwad.helpers.HttpCommunication;
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.syllabus.R;
 
@@ -128,6 +128,11 @@ public class MainActivity extends AppCompatActivity {
             delete_cached_files();
             Toast.makeText(MainActivity.this, "已经清空所有缓存文件", Toast.LENGTH_SHORT).show();
             return true;
+        }
+
+        if (id == R.id.check_update_action){
+            Intent update_activity = new Intent(this, UpdateActivity.class);
+            startActivity(update_activity);
         }
 
         return super.onOptionsItemSelected(item);

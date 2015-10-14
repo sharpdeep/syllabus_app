@@ -16,10 +16,10 @@ import android.widget.Toast;
 import com.example.stu_nwad.adapters.DiscussionAdapter;
 import com.example.stu_nwad.adapters.HomeworkAdapter;
 import com.example.stu_nwad.syllabus.Discussion;
-import com.example.stu_nwad.syllabus.DiscussionHandler;
+import com.example.stu_nwad.interfaces.DiscussionHandler;
 import com.example.stu_nwad.syllabus.Homework;
-import com.example.stu_nwad.syllabus.HomeworkHandler;
-import com.example.stu_nwad.syllabus.InfoPullTask;
+import com.example.stu_nwad.interfaces.HomeworkHandler;
+import com.example.stu_nwad.helpers.InfoPullTask;
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.syllabus.R;
 

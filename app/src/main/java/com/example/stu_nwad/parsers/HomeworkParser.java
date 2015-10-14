@@ -1,10 +1,11 @@
-package com.example.stu_nwad.syllabus;
+package com.example.stu_nwad.parsers;
 
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.stu_nwad.activities.MainActivity;
+import com.example.stu_nwad.syllabus.Homework;
 
 import org.json.JSONArray;
 import org.json.JSONException;

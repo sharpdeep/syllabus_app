@@ -1,4 +1,6 @@
-package com.example.stu_nwad.syllabus;
+package com.example.stu_nwad.interfaces;
+
+import com.example.stu_nwad.syllabus.Discussion;
 
 import java.util.ArrayList;
 
