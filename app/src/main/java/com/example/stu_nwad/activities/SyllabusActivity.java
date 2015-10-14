@@ -59,7 +59,7 @@ public class SyllabusActivity extends AppCompatActivity {
 
         // 提示区域
         info_text = (TextView) findViewById(R.id.message_text);
-        info_text.setText("点击课程: 备忘录|作业信息分享|吹水");
+        info_text.setText("点击课程: 备忘录|作业信息分享|吹水\n右上角更换壁纸|改字体颜色");
 
         // 显示周末的信息
         weekend_text = (TextView) findViewById(R.id.weekend_syllabus_text);
@@ -89,7 +89,7 @@ public class SyllabusActivity extends AppCompatActivity {
         setupViews();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
-            actionBar.setTitle(MainActivity.info_about_syllabus);
+            actionBar.setTitle(MainActivity.cur_year_string  + "学年" + " " + FileOperation.semester_to_string(MainActivity.cur_semester) + " 学期");
     }
 
     public void showClassInfo(Lesson lesson){
