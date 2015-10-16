@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.stu_nwad.activities.MainActivity;
+import com.example.stu_nwad.helpers.StringDataHelper;
 import com.example.stu_nwad.syllabus.R;
 
 /**
@@ -29,7 +30,7 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     private void init(){
-        syllabus_data = MainActivity.generate_years(COUNT);
+        syllabus_data = StringDataHelper.generate_years(COUNT);
         for(int i = 0 ; i < syllabus_data.length ; ++i){
             syllabus_data[i] =  syllabus_data[i].replace("-", "\n");    // 格式一下
         }

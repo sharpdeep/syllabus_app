@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">汕大课程表</string>
     <string name="title_activity_syllabus">课程表</string>
-    <string name="help_message">输入账号密码之后直接点击下面的学期即可查看课表\n长按可以删除缓存文件</string>
+    <string name="help_message">长按可以删除缓存文件</string>
     <string name="about_message">Email: 14xfdeng@stu.edu.cn(Android)\n
                                  Email: 14jhwang@stu.edu.cn(IOS)</string>
     <string name="server_address">http://10.22.27.65/syllabus</string>
@@ -24,7 +24,7 @@
 
 
     <string name="version_code">1</string>
-    <string name="version_name">Ver1.0</string>
+    <string name="version_name">Ver1.1</string>
     <string name="releaser">smallfly</string>
 
     <string name="about_information">
@@ -36,5 +36,6 @@
     <string name="title_activity_update">更新界面</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_main2">Main2Activity</string>
 
 </resources>

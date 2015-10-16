@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.stu_nwad.adapters.ListViewAdapter;
+import com.example.stu_nwad.helpers.StringDataHelper;
 import com.example.stu_nwad.helpers.UpdateHelper;
 import com.example.stu_nwad.interfaces.UpdateHandler;
 import com.example.stu_nwad.parsers.ClassParser;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);  // 加载主布局
-        YEARS = generate_years(4);  // 生成5年的选项
+        YEARS = StringDataHelper.generate_years(4);  // 生成5年的选项
         getAllViews();
         setupViews();
         if (!has_showed_default)
@@ -76,19 +77,6 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
         if (!has_checked_update)
             check_update();
 
-    }
-
-
-    // 产生近count年的年份字符串 2015-2016
-    public static String[] generate_years(int count){
-        // 获取当今年份
-        int cur_year = Calendar.getInstance().get(Calendar.YEAR);
-        // 生成count年的年份数据
-        String[] strs = new String[count];
-        for(int i = 0 ; i < strs.length ; ++ i){
-            strs[i] = (cur_year - i) + "-" + (cur_year - i + 1);
-        }
-        return strs;
     }
 
     private void getAllViews(){
@@ -109,18 +97,18 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
             passwd_edit.setText(user[1]);
         }else{
 //            Toast.makeText(MainActivity.this, "用户文件不存在哟", Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "用户文件不存在");
+//            Log.d(TAG, "用户文件不存在");
         }
 
         // show my words
-        TextView about_text = (TextView) findViewById(R.id.about_text_box);
-        about_text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent about = new Intent(MainActivity.this, AboutActivity.class);
-                startActivity(about);
-            }
-        });
+//        TextView about_text = (TextView) findViewById(R.id.about_text_box);
+//        about_text.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent about = new Intent(MainActivity.this, AboutActivity.class);
+//                startActivity(about);
+//            }
+//        });
     }
 
 
@@ -164,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
         String default_file_name = FileOperation.read_from_file(this, SyllabusActivity.DEFAULT_SYLLABUS_FILE);
         if (default_file_name != null){
             if (FileOperation.hasFile(this, default_file_name)){
+//                Toast.makeText(MainActivity.this, "存在文件: " + default_file_name, Toast.LENGTH_SHORT).show();
                 String json_data = FileOperation.read_from_file(this, default_file_name);
                 if (json_data != null){
                     SyllabusGetter syllabusGetter = new SyllabusGetter(getString(R.string.server_address));
@@ -171,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
                     String[] info = default_file_name.split("_");
                     cur_username = info[0];
                     cur_year_string = info[1];
-                    cur_semester = FileOperation.semester_to_int(info[2]);
+                    cur_semester = StringDataHelper.semester_to_int(info[2]);
                     for(int i = 0 ; i < YEARS.length ; ++i)
                         if (cur_year_string.equals(YEARS[i]))
                             position = i;
@@ -215,14 +204,14 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
         info_about_syllabus = username + " " + years + " " + semester;
         // 先判断有无之前保存的文件
 //        String filename = username + "_" + years + "_" + semester;
-        String filename = FileOperation.generate_syllabus_file_name(username, years, semester, "_");
+        String filename = StringDataHelper.generate_syllabus_file_name(username, years, semester, "_");
         String json_data = FileOperation.read_from_file(MainActivity.this, filename);
         if (json_data != null) {
             syllabusGetter.apply_json(json_data);
             return;
         }
 
-
+        Toast.makeText(MainActivity.this, "正在获取课表信息", Toast.LENGTH_SHORT).show();
         String passwd = passwd_edit.getText().toString();
 //            {"SPRING", "SUMMER", "AUTUMN"}
         String semester_code = "";
@@ -239,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
         postData.put("submit", "query");
         postData.put("years", years);
         postData.put("semester", semester_code);
-        Log.d(TAG, "onClick");
+//        Log.d(TAG, "onClick");
         syllabusGetter.execute(postData);
     }
 
@@ -292,7 +281,6 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(MainActivity.this, "正在获取 " + YEARS[position] + " " + ((TextView)v).getText().toString(), Toast.LENGTH_SHORT).show();
             submit(position, v.getId());
         }
     }
@@ -332,8 +320,8 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
                 public void onClick(DialogInterface dialog, int which) {
 //                    Toast.makeText(MainActivity.this, "清除缓存文件", Toast.LENGTH_SHORT).show();
                     String username = username_edit.getText().toString();
-                    String semester = FileOperation.semester_from_view_id(id);
-                    String file_name = FileOperation.generate_syllabus_file_name(username, YEARS[position], semester, "_");
+                    String semester = StringDataHelper.semester_from_view_id(id);
+                    String file_name = StringDataHelper.generate_syllabus_file_name(username, YEARS[position], semester, "_");
                     delete_cache_file(MainActivity.this, file_name);
                     dialog.dismiss();
                 }
@@ -365,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
 
             @Override
             protected String doInBackground(HashMap<String, String>... params) {
-                Log.d(TAG, "Doing now");
+//                Log.d(TAG, "Doing now");
                 return HttpCommunication.performPostCall(requestURL, params[0]);
             }
 
@@ -393,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
                     classParser.inflateTable();     // 用数据填充课表
                     MainActivity.weekdays_syllabus_data = classParser.weekdays_syllabus_data;
                     MainActivity.weekends_syllabus_data = classParser.weekend_classes;
-                    Log.d(TAG, "established adapter");
+//                    Log.d(TAG, "established adapter");
                     Intent syllabus_activity = new Intent(MainActivity.this, SyllabusActivity.class);
                     startActivity(syllabus_activity);
 //                    Toast.makeText(MainActivity.this, "读取课表成功哟~~~~", Toast.LENGTH_SHORT).show();
@@ -402,10 +390,10 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
                     String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
 //                    String filename = username + "_" + YEARS[position] + "_"
 //                            + semester;
-                    String filename = FileOperation.generate_syllabus_file_name(username, YEARS[position], semester, "_");
+                    String filename = StringDataHelper.generate_syllabus_file_name(username, YEARS[position], semester, "_");
                     if (FileOperation.save_to_file(MainActivity.this, filename, json_data)){
 //                        Toast.makeText(MainActivity.this, "成功保存文件 " + filename, Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "saved file " + filename);
+//                        Log.d(TAG, "saved file " + filename);
                     }
                     // 保存用户文件
                     FileOperation.save_user(MainActivity.this, USERNAME_FILE, PASSWORD_FILE, username, passwd_edit.getText().toString());

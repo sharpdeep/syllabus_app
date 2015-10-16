@@ -88,17 +88,6 @@ public class FileOperation {
         return null;
     }
 
-    public static String generate_syllabus_file_name(String username, String year, String semester, String sep){
-        return username + sep + year + sep + semester;
-    }
-
-    public static String generate_syllabus_file_name(String username, String year, int semester, String sep){
-        return username + sep + year + sep + semester_to_string(semester);
-    }
-
-    public static String generate_class_file_name(String username, String class_id, String sep){
-        return username + sep + class_id;
-    }
 
     public static boolean hasFile(File file){
         if (file.exists())
@@ -190,47 +179,5 @@ public class FileOperation {
 
     }
 
-
-    public static String semester_to_string(int semester){
-        switch (semester){
-            case 1:
-                return "AUTUMN";
-            case 2:
-                return "SPRING";
-            case 3:
-                return "SUMMER";
-            default:
-                return null;
-        }
-    }
-
-    public static int semester_to_int(String semester){
-        if (semester.equals("AUTUMN"))
-            return 1;
-        else if(semester.equals("SPRING"))
-            return 2;
-        else if (semester.equals("SUMMER"))
-            return 3;
-        return -1;
-    }
-
-    public static String semester_from_view_id(int id){
-        String semester;
-        switch (id){
-            case R.id.spring_text_view:
-                semester = "SPRING";
-                break;
-            case R.id.summer_text_view:
-                semester = "SUMMER";
-                break;
-            case R.id.autumn_text_view:
-                semester = "AUTUMN";
-                break;
-            default:
-                semester = "";
-                break;
-        }
-        return semester;
-    }
 
 }

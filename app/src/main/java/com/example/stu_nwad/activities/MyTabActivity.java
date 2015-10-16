@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stu_nwad.adapters.DiscussionAdapter;
+import com.example.stu_nwad.helpers.StringDataHelper;
 import com.example.stu_nwad.syllabus.Discussion;
 import com.example.stu_nwad.interfaces.DiscussionHandler;
 import com.example.stu_nwad.helpers.FileOperation;
@@ -176,16 +177,16 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
             return false;
         String info = MainActivity.info_about_syllabus;
         String username = info.split(" ")[0];
-        String filename = FileOperation.generate_class_file_name(username, lesson.id, "_");
-        Log.d(MainActivity.TAG, "saving file" + filename);
+        String filename = StringDataHelper.generate_class_file_name(username, lesson.id, "_");
+//        Log.d(MainActivity.TAG, "saving file" + filename);
         return FileOperation.save_to_file(this, filename, personal_comment_area.getText().toString());
     }
 
     private String load_comment(){
         String info = MainActivity.info_about_syllabus;
         String username = info.split(" ")[0];
-        String filename = FileOperation.generate_class_file_name(username, lesson.id, "_");
-        Log.d(MainActivity.TAG, "loading " + filename);
+        String filename = StringDataHelper.generate_class_file_name(username, lesson.id, "_");
+//        Log.d(MainActivity.TAG, "loading " + filename);
         return FileOperation.read_from_file(this, filename);
     }
 

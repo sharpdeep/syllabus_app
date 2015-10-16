@@ -14,11 +14,13 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.stu_nwad.adapters.RecyclerAdapter;
 import com.example.stu_nwad.helpers.ColorHelper;
 import com.example.stu_nwad.helpers.FileOperation;
+import com.example.stu_nwad.helpers.StringDataHelper;
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.syllabus.R;
 import java.io.File;
@@ -58,17 +60,19 @@ public class SyllabusActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         // 提示区域
-        info_text = (TextView) findViewById(R.id.message_text);
-        info_text.setText("点击课程: 备忘录|作业信息分享|吹水\n右上角更换壁纸|改字体颜色");
-
+//        info_text = (TextView) findViewById(R.id.message_text);
+////        info_text.setText("点击课程: 备忘录|作业信息分享|吹水\n右上角(菜单)更换壁纸|改字体颜色");
+//        info_text.setText(MainActivity.cur_year_string.replace("-", " ") + " " +
+//                        StringDataHelper.SEMESTER_LANGUAGE.get(StringDataHelper.semester_to_string(MainActivity.cur_semester))
+//        );
         // 显示周末的信息
         weekend_text = (TextView) findViewById(R.id.weekend_syllabus_text);
         String text = "";
         if (MainActivity.weekends_syllabus_data.size() != 0){
             for(Lesson lesson : MainActivity.weekends_syllabus_data)
-                text += lesson.toText() + "\n";
+                text += lesson.weekend_classes() + "\n";
         }else{
-            text = "周末课程信息: 周末没有课";
+            weekend_text.setVisibility(View.GONE);
         }
         weekend_text.setText(text);
 
@@ -89,7 +93,8 @@ public class SyllabusActivity extends AppCompatActivity {
         setupViews();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
-            actionBar.setTitle(MainActivity.cur_year_string  + "学年" + " " + FileOperation.semester_to_string(MainActivity.cur_semester) + " 学期");
+            actionBar.setTitle(MainActivity.cur_year_string.replace("-", " ") + " " +
+                    StringDataHelper.SEMESTER_LANGUAGE.get(StringDataHelper.semester_to_string(MainActivity.cur_semester)));
     }
 
     public void showClassInfo(Lesson lesson){
@@ -142,7 +147,7 @@ public class SyllabusActivity extends AppCompatActivity {
      * 设置默认学期
      */
     private boolean set_default_syllabus(){
-        String syllabus_file_name =  FileOperation.generate_syllabus_file_name(MainActivity.cur_username, MainActivity.cur_year_string,
+        String syllabus_file_name = StringDataHelper.generate_syllabus_file_name(MainActivity.cur_username, MainActivity.cur_year_string,
                 MainActivity.cur_semester, "_");
         // Debug
 //        Toast.makeText(SyllabusActivity.this, mRecyclerView.getWidth() + ", " + mRecyclerView.getHeight(), Toast.LENGTH_SHORT).show();

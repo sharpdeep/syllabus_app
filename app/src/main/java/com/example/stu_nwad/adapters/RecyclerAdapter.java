@@ -2,12 +2,13 @@ package com.example.stu_nwad.adapters;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.stu_nwad.parsers.ClassParser;
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.activities.SyllabusActivity;
 import com.example.stu_nwad.syllabus.R;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  * Created by STU_nwad on 2015/9/23.
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
-    private Object[] mDataset;
+    private Object[] data_set;
     private SyllabusActivity syllabusActivity;
 
     private int text_color = Color.WHITE;
@@ -51,7 +52,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public RecyclerAdapter(Object[] myDataset, SyllabusActivity syllabusActivity) {
-        this.mDataset = myDataset;
+        this.data_set = myDataset;
         this.syllabusActivity = syllabusActivity;
     }
 
@@ -77,21 +78,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        if (mDataset[position] instanceof Lesson){
-//            Log.d("GRID_VIEW", "[" + position + "]" + (position / ClassParser.COLUMNS) + "行" + (position % ClassParser.COLUMNS) + "列");
-            holder.mTextView.setOnClickListener(new ClickAndShow(position));
+        if (data_set[position] instanceof Lesson)
             holder.mTextView.setBackgroundResource(R.drawable.input_box);
-
-        }
- else{
+        else
             holder.mTextView.setBackgroundResource(0);
-        }
-        holder.mTextView.setText(mDataset[position].toString());
+
+        holder.mTextView.setOnClickListener(new ClickAndShow(position));    // 至于被点击的具体是什么内容就由 ClickAndShow 决定了
+        holder.mTextView.setText(data_set[position].toString());
         holder.mTextView.setClickable(true);
         holder.mTextView.setTextSize(12);
         holder.mTextView.setTextColor(text_color);
 
-//        holder.mTextView.setGravity(Gravity.CENTER);
 
     }
 
@@ -105,24 +102,30 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         @Override
         public void onClick(View v) {
-//            Toast.makeText(syllabusActivity, "Clicked " + position, Toast.LENGTH_SHORT).show();
-            if (position != -1 && mDataset[position] instanceof Lesson){
                 // 因为安卓会重用view, 所以这里需要注意判断一下，点击的到底是不是真正的课程
                 TextView view = (TextView) v;
                 String text = view.getText().toString();
-                if (text.length() <= 1) // 即为 上课时间1-C 或者 星期数 或者是空字符
+//                view.setText("被点了");
+
+                // 左边的具体上课节数
+                if (ClassParser.class_table.contains(text)){
+                    String[] time_ = ClassParser.time_table.get(text).split(",");   // {"8:00", "8:50"}
+                    Toast.makeText(syllabusActivity,  text +  " 上课时间: " + time_[0] + " 至 " + time_[1] , Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (text.length() <= 1) // 点了星期几, 或者空白格
                     return;
                 // 这里以后才是真的课程哟~
-                syllabusActivity.showClassInfo((Lesson) mDataset[position]);
-//                Log.d("GRID_VIEW", "[" + position + "]" + "  " + (position / ClassParser.COLUMNS) + "行" + " " + (position % ClassParser.COLUMNS) + "列");
-//                Toast.makeText(syllabusActivity, "[" + position + "]" + "  " + (position / ClassParser.COLUMNS) + "行" + " " + (position % ClassParser.COLUMNS) + "列", Toast.LENGTH_SHORT).show();
+                syllabusActivity.showClassInfo((Lesson) data_set[position]);
+
             }
-        }
+//        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return data_set.length;
     }
 }

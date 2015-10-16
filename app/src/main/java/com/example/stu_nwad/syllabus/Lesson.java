@@ -1,6 +1,7 @@
 package com.example.stu_nwad.syllabus;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by STU_nwad on 2015/9/23.
@@ -42,7 +43,19 @@ public class Lesson {
     }
 
     // 主要用于显示周末课程时候的表达呢
-    public String toText(){
-        return name + "(学分)" + credit + "(" + teacher + ")@" + room + ": " + days.toString();
+    public String weekend_classes(){
+        // [课程名(学分)]班号@教室:[只显示周末的上课时间]
+        String sat = null, sun = null;
+        Set<String> day_set = days.keySet();
+        if (day_set.contains("w0"))
+            sun = days.get("w0");
+        if (day_set.contains("w6"))
+            sat = days.get("w6");
+        String result = "[" + name + "(" + credit + ")"  + "]" + id  + "(" + teacher + ")@" + room + ": [";
+        if (sat != null)
+            result += "周六" + sat;
+        if (sun != null)
+            result += " 周日" + sun;
+        return result + "]";
     }
 }

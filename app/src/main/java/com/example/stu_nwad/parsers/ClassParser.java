@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.stu_nwad.activities.MainActivity;
+import com.example.stu_nwad.helpers.StringDataHelper;
 import com.example.stu_nwad.syllabus.Lesson;
 
 import org.json.JSONArray;
@@ -14,6 +15,8 @@ import org.json.JSONTokener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class ClassParser {
@@ -23,6 +26,27 @@ public class ClassParser {
 
     public static final String EMPTY_CLASS_STRING = "";
     public static final String[] LABELS = {"一", "二", "三", "四", "五", "六", "日"};
+    public static final HashMap<String, String> time_table;
+    public static final Set<String> class_table;
+    // 静态的初始化过程
+    static {
+        time_table = new HashMap<>();
+        time_table.put("1", "8:00,8:50");
+        time_table.put("2", "9:00,9:50");
+        time_table.put("3", "10:10,11:00");
+        time_table.put("4", "11:10,12:00");
+        time_table.put("5", "13:00,13:50");
+        time_table.put("6", "14:00,14:50");
+        time_table.put("7", "15:00,15:50");
+        time_table.put("8", "16:10,17:00");
+        time_table.put("9", "17:10,18:00");
+        time_table.put("0", "18:10,19:00");
+        time_table.put("A", "19:10,20:00");
+        time_table.put("B", "20:10,21:00");
+        time_table.put("C", "21:10,22:00");
+
+        class_table = time_table.keySet();
+    }
     public static final String ERROR = "ERROR";
 
     public static final int ROWS = 14;
@@ -54,7 +78,12 @@ public class ClassParser {
             // 判断有没有错误先
             if (curriculum.has(ERROR)){
                 String error = curriculum.getString(ERROR);
-                Toast.makeText(context, "啊哦，出现了这个错误呢:" + error, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "错误代码: " + error, Toast.LENGTH_SHORT).show();
+                String err_resp = StringDataHelper.get_error_response(error);
+                if (err_resp != null)
+                    Toast.makeText(context, err_resp, Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(context, "错误: " + error, Toast.LENGTH_SHORT).show();
                 return false;
             }
             // 得到所有课程的数组
