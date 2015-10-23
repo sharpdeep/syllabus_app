@@ -273,8 +273,9 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
     }
 
     private void parse_and_display(String json_data){
-        if (classParser == null)
-            classParser = new ClassParser(this);
+//        if (classParser == null)
+        // 每次用新的classParser [暂时这样修复这个BUG]
+        classParser = new ClassParser(this);
         if (classParser.parseJSON(json_data)) {
             classParser.inflateTable();     // 用数据填充课表
             MainActivity.weekdays_syllabus_data = classParser.weekdays_syllabus_data;

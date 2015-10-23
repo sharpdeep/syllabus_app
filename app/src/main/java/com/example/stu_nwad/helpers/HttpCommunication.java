@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class HttpCommunication {
 
-    public static int timeout = 3000; // 3s
+    public static int timeout = 4000; // 4s
 
     /**
      * 访问远程网站，获取信息
@@ -32,7 +32,7 @@ public class HttpCommunication {
     public static String perform_get_call(String hostaddr, int timeout){
         URL url;
         String response = "";
-
+        Log.d(MainActivity.TAG, "地址是:" + hostaddr);
         try {
             url = new URL(hostaddr);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -68,7 +68,7 @@ public class HttpCommunication {
         String response = "";
         try {
             url = new URL(requestURL);
-
+            Log.d(MainActivity.TAG, "地址是:" + requestURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(timeout);
             conn.setConnectTimeout(timeout);
