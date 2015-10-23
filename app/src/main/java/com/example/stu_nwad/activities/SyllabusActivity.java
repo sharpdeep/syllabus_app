@@ -59,12 +59,6 @@ public class SyllabusActivity extends AppCompatActivity {
         mAdapter.set_color(ColorHelper.read_color_from_file(this, COLOR_FILE_NAME));
         mRecyclerView.setAdapter(mAdapter);
 
-        // 提示区域
-//        info_text = (TextView) findViewById(R.id.message_text);
-////        info_text.setText("点击课程: 备忘录|作业信息分享|吹水\n右上角(菜单)更换壁纸|改字体颜色");
-//        info_text.setText(MainActivity.cur_year_string.replace("-", " ") + " " +
-//                        StringDataHelper.SEMESTER_LANGUAGE.get(StringDataHelper.semester_to_string(MainActivity.cur_semester))
-//        );
         // 显示周末的信息
         weekend_text = (TextView) findViewById(R.id.weekend_syllabus_text);
         String text = "";

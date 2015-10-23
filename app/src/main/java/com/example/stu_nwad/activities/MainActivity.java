@@ -15,8 +15,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.stu_nwad.adapters.ListViewAdapter;
+import com.example.stu_nwad.helpers.LessonPullTask;
 import com.example.stu_nwad.helpers.StringDataHelper;
 import com.example.stu_nwad.helpers.UpdateHelper;
+import com.example.stu_nwad.interfaces.LessonHandler;
 import com.example.stu_nwad.interfaces.UpdateHandler;
 import com.example.stu_nwad.parsers.ClassParser;
 import com.example.stu_nwad.helpers.FileOperation;
@@ -30,7 +32,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 
-public class MainActivity extends AppCompatActivity implements UpdateHandler {
+public class MainActivity extends AppCompatActivity implements UpdateHandler, LessonHandler {
     public static Object[] weekdays_syllabus_data;     // 用于向显示课表的activity传递数据
     public static ArrayList<Lesson> weekends_syllabus_data;
     public static String info_about_syllabus;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
     private boolean has_checked_update = false;
 
     private UpdateHelper updateHelper;
+    private ClassParser classParser;
 
     // 创建主界面
     @Override
@@ -71,11 +74,13 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
         YEARS = StringDataHelper.generate_years(4);  // 生成5年的选项
         getAllViews();
         setupViews();
-        if (!has_showed_default)
-            load_default_syllabus();
+
         // 检查更新
         if (!has_checked_update)
             check_update();
+        if (!has_showed_default)
+            load_default_syllabus();
+
 
     }
 
@@ -95,20 +100,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
         if (user != null){
             username_edit.setText(user[0]);
             passwd_edit.setText(user[1]);
-        }else{
-//            Toast.makeText(MainActivity.this, "用户文件不存在哟", Toast.LENGTH_SHORT).show();
-//            Log.d(TAG, "用户文件不存在");
         }
-
-        // show my words
-//        TextView about_text = (TextView) findViewById(R.id.about_text_box);
-//        about_text.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent about = new Intent(MainActivity.this, AboutActivity.class);
-//                startActivity(about);
-//            }
-//        });
     }
 
 
@@ -155,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
 //                Toast.makeText(MainActivity.this, "存在文件: " + default_file_name, Toast.LENGTH_SHORT).show();
                 String json_data = FileOperation.read_from_file(this, default_file_name);
                 if (json_data != null){
-                    SyllabusGetter syllabusGetter = new SyllabusGetter(getString(R.string.server_address));
                     // 设置一些相关信息
                     String[] info = default_file_name.split("_");
                     cur_username = info[0];
@@ -166,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
                             position = i;
                     info_about_syllabus = cur_username + " " + cur_year_string + " " + info[2];
                     has_showed_default = true;
-                    syllabusGetter.apply_json(json_data);
+                    parse_and_display(json_data);
                     return;
                 }
             }
@@ -179,7 +170,6 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
         cur_username = username;
 //        String requestURL = address_edit.getText().toString();
         String requestURL = this.getString(R.string.server_address);
-        SyllabusGetter syllabusGetter = new SyllabusGetter(requestURL);
 
         String years = YEARS[position];  // 点击到列表的哪一项
         cur_year_string = years;    // 用于共享目的
@@ -207,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
         String filename = StringDataHelper.generate_syllabus_file_name(username, years, semester, "_");
         String json_data = FileOperation.read_from_file(MainActivity.this, filename);
         if (json_data != null) {
-            syllabusGetter.apply_json(json_data);
+            parse_and_display(json_data);
             return;
         }
 
@@ -229,7 +219,11 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
         postData.put("years", years);
         postData.put("semester", semester_code);
 //        Log.d(TAG, "onClick");
-        syllabusGetter.execute(postData);
+
+        LessonPullTask task = new LessonPullTask(getString(R.string.server_address), this);
+        task.execute(postData);
+
+//        syllabusGetter.execute(postData);
     }
 
     private void check_update(){
@@ -267,6 +261,42 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
     }
 
 
+
+
+    @Override
+    public void deal_with_lessons(String raw_data) {
+        if (raw_data.isEmpty()){
+            Toast.makeText(MainActivity.this, "没能成功获取课表数据", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        parse_and_display(raw_data);
+    }
+
+    private void parse_and_display(String json_data){
+        if (classParser == null)
+            classParser = new ClassParser(this);
+        if (classParser.parseJSON(json_data)) {
+            classParser.inflateTable();     // 用数据填充课表
+            MainActivity.weekdays_syllabus_data = classParser.weekdays_syllabus_data;
+            MainActivity.weekends_syllabus_data = classParser.weekend_classes;
+//                    Log.d(TAG, "established adapter");
+            Intent syllabus_activity = new Intent(MainActivity.this, SyllabusActivity.class);
+            startActivity(syllabus_activity);
+//                    Toast.makeText(MainActivity.this, "读取课表成功哟~~~~", Toast.LENGTH_SHORT).show();
+
+            // 保存文件 命名格式: name_years_semester
+            String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
+//                    String filename = username + "_" + YEARS[position] + "_"
+//                            + semester;
+            String filename = StringDataHelper.generate_syllabus_file_name(username, YEARS[position], semester, "_");
+            if (FileOperation.save_to_file(MainActivity.this, filename, json_data)){
+//                        Toast.makeText(MainActivity.this, "成功保存文件 " + filename, Toast.LENGTH_SHORT).show();
+//                        Log.d(TAG, "saved file " + filename);
+            }
+            // 保存用户文件
+            FileOperation.save_user(MainActivity.this, USERNAME_FILE, PASSWORD_FILE, username, passwd_edit.getText().toString());
+        }
+    }
     // 获取内部类的实例
     public ShowSyllabus getOnClickListener(int position){
         return new ShowSyllabus(position);
@@ -336,70 +366,4 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler {
             return true;
         }
     }
-
-    /**
-     * 用于异步发送网络请求
-     */
-        class SyllabusGetter extends AsyncTask<HashMap<String, String>, Void, String> {
-
-            private String requestURL;
-            private ClassParser classParser; // = new ClassParser();
-
-            public SyllabusGetter(String requestURL){
-                super();
-                this.requestURL = requestURL;
-                classParser = new ClassParser(MainActivity.this);
-            }
-
-            @Override
-            protected String doInBackground(HashMap<String, String>... params) {
-//                Log.d(TAG, "Doing now");
-                return HttpCommunication.performPostCall(requestURL, params[0]);
-            }
-
-        /**
-         * 将json数据进行解析
-         * @param json_data
-         */
-            public void apply_json(String json_data){
-                onPostExecute(json_data);
-            }
-
-            @Override
-            protected void onPostExecute(String response){
-                if (response.isEmpty()){
-                    String err_msg = "吖!没能连接到服务器呢~重试一下" + "\n" + "请确保接入学校内网哟~\n"
-                            + "学分制系统服务器可能关了" + "\n宿舍服务器可能没开呢~" + "\n再重试一下试试看~";
-                    Toast.makeText(MainActivity.this, err_msg, Toast.LENGTH_LONG).show();
-                    return;
-                }
-                parse_and_display(response);
-
-            }
-            private void parse_and_display(String json_data){
-                if (classParser.parseJSON(json_data)) {
-                    classParser.inflateTable();     // 用数据填充课表
-                    MainActivity.weekdays_syllabus_data = classParser.weekdays_syllabus_data;
-                    MainActivity.weekends_syllabus_data = classParser.weekend_classes;
-//                    Log.d(TAG, "established adapter");
-                    Intent syllabus_activity = new Intent(MainActivity.this, SyllabusActivity.class);
-                    startActivity(syllabus_activity);
-//                    Toast.makeText(MainActivity.this, "读取课表成功哟~~~~", Toast.LENGTH_SHORT).show();
-
-                    // 保存文件 命名格式: name_years_semester
-                    String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
-//                    String filename = username + "_" + YEARS[position] + "_"
-//                            + semester;
-                    String filename = StringDataHelper.generate_syllabus_file_name(username, YEARS[position], semester, "_");
-                    if (FileOperation.save_to_file(MainActivity.this, filename, json_data)){
-//                        Toast.makeText(MainActivity.this, "成功保存文件 " + filename, Toast.LENGTH_SHORT).show();
-//                        Log.d(TAG, "saved file " + filename);
-                    }
-                    // 保存用户文件
-                    FileOperation.save_user(MainActivity.this, USERNAME_FILE, PASSWORD_FILE, username, passwd_edit.getText().toString());
-                }
-            }
-
-
-        }
 }

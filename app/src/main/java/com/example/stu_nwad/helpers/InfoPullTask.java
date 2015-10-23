@@ -9,7 +9,7 @@ import com.example.stu_nwad.interfaces.DiscussionHandler;
 import com.example.stu_nwad.interfaces.HomeworkHandler;
 import com.example.stu_nwad.parsers.HomeworkParser;
 import com.example.stu_nwad.syllabus.Discussion;
-import com.example.stu_nwad.syllabus.DiscussionParser;
+import com.example.stu_nwad.parsers.DiscussionParser;
 import com.example.stu_nwad.syllabus.R;
 
 import java.io.UnsupportedEncodingException;

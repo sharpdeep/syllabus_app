@@ -14,6 +14,7 @@ import com.example.stu_nwad.activities.SyllabusActivity;
 import com.example.stu_nwad.syllabus.R;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by STU_nwad on 2015/9/23.
@@ -23,6 +24,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     private SyllabusActivity syllabusActivity;
 
     private int text_color = Color.WHITE;
+
+    public static final int[] class_cell_drawable = {R.drawable.blue_cell, R.drawable.brown_cell, R.drawable.deep_red_cell, R.drawable.green_cell
+        , R.drawable.input_box, R.drawable.red_cell, R.drawable.purple_cell};
+
+    public static final Random rand = new Random(System.currentTimeMillis());
+
+    public static int get_random_cell(){
+        int index = rand.nextInt(class_cell_drawable.length);
+        return class_cell_drawable[index];
+    }
 
     public void set_color(int color){
         text_color = color;
@@ -78,11 +89,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        if (data_set[position] instanceof Lesson)
-            holder.mTextView.setBackgroundResource(R.drawable.input_box);
+        if (data_set[position] instanceof Lesson) {
+            holder.mTextView.setBackgroundResource(get_random_cell());
+            holder.mTextView.getBackground().setAlpha(150);  // 透明  [0,255]
+        }
         else
             holder.mTextView.setBackgroundResource(0);
 
+//        holder.mTextView.setGravity(View.TEXT_ALIGNMENT_CENTER);
         holder.mTextView.setOnClickListener(new ClickAndShow(position));    // 至于被点击的具体是什么内容就由 ClickAndShow 决定了
         holder.mTextView.setText(data_set[position].toString());
         holder.mTextView.setClickable(true);

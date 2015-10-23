@@ -25,7 +25,7 @@ public class ClassParser {
     public ArrayList<Lesson> weekend_classes;  // 存放周末的课程
 
     public static final String EMPTY_CLASS_STRING = "";
-    public static final String[] LABELS = {"一", "二", "三", "四", "五", "六", "日"};
+    public static final String[] LABELS = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
     public static final HashMap<String, String> time_table;
     public static final Set<String> class_table;
     // 静态的初始化过程
@@ -216,6 +216,7 @@ public class ClassParser {
      */
     public void inflateTable(){
 //        Log.d(MainActivity.TAG, "before inflate class_table");
+        weekend_classes.clear();
         // 填充课表数据
         for(int i = 0 ; i < all_classes.size() ; ++i){
             // 遍历key set

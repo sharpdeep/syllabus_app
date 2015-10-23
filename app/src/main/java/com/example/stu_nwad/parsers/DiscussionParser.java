@@ -1,6 +1,8 @@
-package com.example.stu_nwad.syllabus;
+package com.example.stu_nwad.parsers;
 
 import android.content.Context;
+
+import com.example.stu_nwad.syllabus.Discussion;
 
 import org.json.JSONArray;
 import org.json.JSONException;

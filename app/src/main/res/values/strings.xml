@@ -22,10 +22,14 @@
     <string name="updated_text">正在检查更新</string>
     <string name="outdated_text">已经有新版本发布啦，还在等什么，快点我!!!</string>
 
+    <string name="autumn">秋季\n学期</string>
+    <string name="spring">春季\n学期</string>
+    <string name="summer">夏季\n学期</string>
 
     <string name="version_code">1</string>
     <string name="version_name">Ver1.1</string>
     <string name="releaser">smallfly</string>
+
 
     <string name="about_information">
         哈哈，你竟然点进这里来了!

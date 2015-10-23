@@ -198,7 +198,7 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
                 if (save_comment()){
                     Toast.makeText(MyTabActivity.this, "保存成功~", Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(MyTabActivity.this, "保存失败~", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyTabActivity.this, "不保存空内容呢", Toast.LENGTH_SHORT).show();
                 }
 
                 break;
