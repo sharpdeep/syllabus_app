@@ -121,6 +121,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 String text = view.getText().toString();
 //                view.setText("被点了");
 
+                if (text.isEmpty())
+                    return;
+
                 // 左边的具体上课节数
                 if (ClassParser.class_table.contains(text)){
                     String[] time_ = ClassParser.time_table.get(text).split(",");   // {"8:00", "8:50"}
@@ -128,8 +131,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                     return;
                 }
 
-                if (text.length() <= 1) // 点了星期几, 或者空白格
+                if (text.length() == 2 || text.length() == 3) // 点了同上、星期几
                     return;
+
                 // 这里以后才是真的课程哟~
                 syllabusActivity.showClassInfo((Lesson) data_set[position]);
 

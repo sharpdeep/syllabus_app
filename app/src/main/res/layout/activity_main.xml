@@ -38,7 +38,7 @@
 
                 <TextView
 
-                    android:text="账号:"
+                    android:text="@string/username"
                     android:textColor="#ffff"
                     android:layout_weight="1"
                     android:layout_marginLeft="2dp"
@@ -47,7 +47,7 @@
                     android:layout_height="wrap_content" />
                 <EditText
                     android:id="@+id/username_edit"
-                    android:hint="username"
+                    android:hint="@string/username_hint"
                     android:singleLine="true"
                     android:textColor="#ffff"
                     android:layout_margin="1dp"
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:text="密码:"
+                    android:text="@string/password"
                     android:layout_weight="1"
                     android:textColor="#ffff"
                     android:layout_marginLeft="2dp"
@@ -72,10 +72,10 @@
                     android:id="@+id/passwd_edit"
                     android:textColor="#ffff"
                     android:layout_weight="6"
-                    android:hint="password"
+                    android:hint="@string/password_hint"
                     android:singleLine="true"
                     android:layout_margin="1dp"
-                    android:password="true"
+                    android:inputType="textPassword"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -114,7 +114,7 @@
         <TextView
             android:textColor="#fdfdfe"
             android:id="@+id/about_text_box"
-            android:background="@drawable/input_box"
+            android:background="@drawable/blue_cell"
             android:gravity="center"
             android:layout_gravity="center"
             android:text="@string/about_message"
