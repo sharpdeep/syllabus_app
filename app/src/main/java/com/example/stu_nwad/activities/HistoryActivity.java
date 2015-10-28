@@ -30,12 +30,14 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
 
     public static final String[] HISTORY_TYPES = {"Homework", "Discussion"};
 
+    public static final int MAX_COUNT = 100;
+
     private ArrayAdapter<String> data_adapter;
     private HomeworkAdapter homeworkAdapter;
     private DiscussionAdapter discussionAdapter;
 
     private ArrayList<Homework> all_homework;
-    private ArrayList<Discussion> all_discussions;
+//    private ArrayList<Discussion> all_discussions;
 
     private Spinner history_type_spinner;
     private Button query_history_button;
@@ -114,8 +116,8 @@ public class HistoryActivity extends AppCompatActivity implements HomeworkHandle
         }
         int count = Integer.parseInt(history_count_edit.getText().toString());
 
-        if (count > 50){
-            Toast.makeText(HistoryActivity.this, "数字不能大于50哟~~~", Toast.LENGTH_SHORT).show();
+        if (count > MAX_COUNT){
+            Toast.makeText(HistoryActivity.this, "数字不能大于" + MAX_COUNT + "哟~~~", Toast.LENGTH_SHORT).show();
             return;
         }
 

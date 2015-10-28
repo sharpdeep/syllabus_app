@@ -48,7 +48,7 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
     public static final String HOMEWORK_TAB = "homework";
     public static final String DISCUSS_TAB = "discuss";
 
-    private static int MESSAGE_COUNT = 15;
+    private static int MESSAGE_COUNT = 20;
 
     // 个人备注区域
     private TextView class_info_text_view;
@@ -82,7 +82,7 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
     private InfoPullTask discussion_pull_task;
 
     public void setLesson(Lesson lesson){
-        this.lesson = lesson;
+        MyTabActivity.lesson = lesson;
 //        Log.d(MainActivity.TAG, lesson.representation());
         class_info_text_view.setText(lesson.representation());
         personal_comment = load_comment();

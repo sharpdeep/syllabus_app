@@ -29,8 +29,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <TextView
+                    android:layout_marginLeft="2dp"
+                    android:id="@+id/dialog_content"
+                    android:textColor="#ffffff"
+                    android:layout_margin="5dp"
+                    android:hint="具体的课程信息"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
                 <ScrollView
-                    android:layout_weight="3"
+                    android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp">
 
@@ -52,10 +61,8 @@
                 <Button
                     android:id="@+id/personal_submit"
                     android:text="保存"
-                    android:layout_weight="1"
-                    android:background="@drawable/text_box"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp" />
+                    android:layout_height="wrap_content" />
 
 
             </LinearLayout>
@@ -68,31 +75,28 @@
 
 
                     <TextView
-                        android:layout_weight="1"
                         android:text="最新的作业信息"
                         android:textColor="#ffffff"
                         android:gravity="center"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp" />
+                        android:layout_height="wrap_content" />
                     <EditText
-                        android:layout_weight="3"
                         android:id="@+id/last_homework"
                         android:background="@drawable/input_box"
                         android:editable="false"
                         android:hint="这里显示最新的作业信息"
                         android:textSize="12sp"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp" />
+                        android:layout_height="wrap_content" />
 
 
 
                     <TextView
-                        android:layout_weight="1"
                         android:text="作业发布区"
                         android:textColor="#ffffff"
                         android:gravity="center"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp" />
+                        android:layout_height="wrap_content" />
 
                 <EditText
                     android:id="@+id/homework_time_edit"
@@ -101,16 +105,13 @@
                     android:hint="作业提交时间"
                     android:textColor="#ffffff"
                     android:maxLength="20"
+                    android:layout_marginBottom="4dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <ScrollView
-                    android:layout_weight="3"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp">
 
                     <EditText
-
+                        android:layout_weight="1"
                         android:id="@+id/homework_content_edit"
                         android:background="@drawable/text_box"
                         android:gravity="start"
@@ -121,15 +122,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
-                </ScrollView>
+
 
 
 
                 <LinearLayout
-                    android:layout_weight="1"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp">
+                    android:layout_height="wrap_content">
 
 
                     <Button
@@ -159,9 +159,9 @@
 
 
                 <ListView
-                    android:background="@drawable/text_box"
                     android:layout_weight="6"
                     android:id="@+id/discuss_list_view"
+                    android:divider="@android:color/transparent"
                     android:layout_width="match_parent"
                     android:layout_height="0dp">
                 </ListView>
@@ -176,10 +176,10 @@
                         android:inputType="textMultiLine"
                         android:gravity="left"
                         android:id="@+id/talk_field"
-                        android:minLines="10"
-                        android:textColor="#ffffff"
+                        android:background="@drawable/right_msg"
                         android:maxLength="140"
-                        android:background="@drawable/input_box"
+                        android:minLines="6"
+                        android:layout_marginBottom="2dp"
                         android:hint="140个字想怎么吹怎么吹~"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -188,7 +188,6 @@
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 

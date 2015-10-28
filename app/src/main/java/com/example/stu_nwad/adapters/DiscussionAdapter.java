@@ -1,12 +1,16 @@
 package com.example.stu_nwad.adapters;
 
 import android.content.Context;
+import android.text.Layout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.stu_nwad.activities.MainActivity;
 import com.example.stu_nwad.syllabus.Discussion;
 import com.example.stu_nwad.syllabus.R;
 
@@ -26,9 +30,12 @@ public class DiscussionAdapter extends ArrayAdapter<Discussion> {
 
     private int layout_id;
 
+    private static LinearLayout.LayoutParams params;
+
     public DiscussionAdapter(Context context, int resource, List<Discussion> objects) {
         super(context, resource, objects);
         this.layout_id = resource;
+        params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     }
 
     @Override
@@ -55,6 +62,20 @@ public class DiscussionAdapter extends ArrayAdapter<Discussion> {
         viewHolder.publisher_text.setText(discussion.publisher);
         viewHolder.pub_time_text.setText(discussion.transfer_time());
         viewHolder.content_text.setText(discussion.content.trim());   // 去除没必要的空字符
+
+        int res_id = -1;
+
+        if (!discussion.publisher.equals(MainActivity.cur_username)) {
+            res_id = R.drawable.left_msg;
+            params.gravity = Gravity.LEFT;
+        }
+        else {
+            res_id = R.drawable.right_msg;
+            params.gravity = Gravity.RIGHT;
+        }
+
+        view.setBackgroundResource(res_id);
+        view.setLayoutParams(params);
 
         return view;    // view 里面的对象的属性是通过viewHolder修改的
     }

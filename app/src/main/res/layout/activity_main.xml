@@ -114,7 +114,7 @@
         <TextView
             android:textColor="#fdfdfe"
             android:id="@+id/about_text_box"
-            android:background="@drawable/blue_cell"
+            android:background="@drawable/input_box"
             android:gravity="center"
             android:layout_gravity="center"
             android:text="@string/about_message"
