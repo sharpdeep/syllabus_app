@@ -32,6 +32,7 @@ public class DiscussionAdapter extends ArrayAdapter<Discussion> {
 
     private static LinearLayout.LayoutParams params;
 
+    // 构造函数
     public DiscussionAdapter(Context context, int resource, List<Discussion> objects) {
         super(context, resource, objects);
         this.layout_id = resource;

@@ -49,6 +49,10 @@ public class StringDataHelper {
         return strs;
     }
 
+    public static String generate_token_file_name(String username){
+        return username + "_token";
+    }
+
     public static String generate_syllabus_file_name(String username, String year, String semester, String sep){
         return username + sep + year + sep + semester;
     }

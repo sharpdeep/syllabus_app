@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.example.stu_nwad.activities.MainActivity;
 import com.example.stu_nwad.helpers.StringDataHelper;
+import com.example.stu_nwad.interfaces.TokenGetter;
 import com.example.stu_nwad.syllabus.Lesson;
 
 import org.json.JSONArray;
@@ -15,7 +16,6 @@ import org.json.JSONTokener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -55,12 +55,15 @@ public class ClassParser {
 
     private Context context;
 
-    public ClassParser(Context context){
+    private TokenGetter tokenGetter;
+
+    public ClassParser(Context context, TokenGetter tokenGetter){
         weekdays_syllabus_data = new Object[ROWS * COLUMNS];
         all_classes = new ArrayList<>();
         weekend_classes = new ArrayList<>();
         this.context = context;
         init();     // 生成初始化的数据，在特定位置上填上日期信息之类的
+        this.tokenGetter = tokenGetter;
     }
 
 
@@ -88,6 +91,9 @@ public class ClassParser {
             }
             // 得到所有课程的数组
             JSONArray classes = curriculum.getJSONArray("classes");
+            String token = curriculum.getString("token");
+            tokenGetter.get_token(token);
+//            Toast.makeText(context, "the token is " + token, Toast.LENGTH_SHORT).show();
 //            Log.d(MainActivity.TAG, classes.length() + " classes");
             for (int i = 0; i < classes.length(); ++i) {
                 // 得到每一节课

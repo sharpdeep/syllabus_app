@@ -45,7 +45,7 @@ public class SyllabusActivity extends AppCompatActivity {
     private RecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private TextView weekend_text;
-    private TextView info_text;
+//    private TextView info_text;
 
     private Bitmap wall_paper;
 
@@ -89,6 +89,7 @@ public class SyllabusActivity extends AppCompatActivity {
         if (actionBar != null)
             actionBar.setTitle(MainActivity.cur_year_string.replace("-", " ") + " " +
                     StringDataHelper.SEMESTER_LANGUAGE.get(StringDataHelper.semester_to_string(MainActivity.cur_semester)));
+//        Toast.makeText(SyllabusActivity.this, "the token is " + MainActivity.token, Toast.LENGTH_SHORT).show();
     }
 
     public void showClassInfo(Lesson lesson){

@@ -15,6 +15,7 @@
     <string name="insert_home_work_api">http://10.22.27.65/api/homework</string>
     <string name="insert_discussion_api">http://10.22.27.65/api/discuss</string>
     <string name="version_control_address">http://10.22.27.65/api/version</string>
+    <string name="delete_api">http://10.22.27.65/api/v1.0/delete/</string>
     <string name="title_activity_history">历史记录</string>
     <string name="title_activity_about">Small Fly\'s Words</string>
     <string name="action_settings">Settings</string>

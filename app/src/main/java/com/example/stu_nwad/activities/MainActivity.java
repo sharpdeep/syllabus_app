@@ -19,6 +19,7 @@ import com.example.stu_nwad.helpers.LessonPullTask;
 import com.example.stu_nwad.helpers.StringDataHelper;
 import com.example.stu_nwad.helpers.UpdateHelper;
 import com.example.stu_nwad.interfaces.LessonHandler;
+import com.example.stu_nwad.interfaces.TokenGetter;
 import com.example.stu_nwad.interfaces.UpdateHandler;
 import com.example.stu_nwad.parsers.ClassParser;
 import com.example.stu_nwad.helpers.FileOperation;
@@ -32,13 +33,15 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 
-public class MainActivity extends AppCompatActivity implements UpdateHandler, LessonHandler {
+public class MainActivity extends AppCompatActivity implements UpdateHandler, LessonHandler, TokenGetter{
     public static Object[] weekdays_syllabus_data;     // 用于向显示课表的activity传递数据
     public static ArrayList<Lesson> weekends_syllabus_data;
     public static String info_about_syllabus;
     public static final String USERNAME_FILE = "username.txt";
     public static final String PASSWORD_FILE = "password.txt";
 
+    // 用户的token数据
+    public static String token = "";
 
     // 用于和其他activity共享的数据
     public static String cur_year_string;
@@ -197,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
         String filename = StringDataHelper.generate_syllabus_file_name(username, years, semester, "_");
         String json_data = FileOperation.read_from_file(MainActivity.this, filename);
         if (json_data != null) {
+            // 读取之前存的token
+            get_local_token();
             parse_and_display(json_data);
             return;
         }
@@ -275,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
     private void parse_and_display(String json_data){
 //        if (classParser == null)
         // 每次用新的classParser [暂时这样修复这个BUG]
-        classParser = new ClassParser(this);
+        classParser = new ClassParser(this, this);
         if (classParser.parseJSON(json_data)) {
             classParser.inflateTable();     // 用数据填充课表
             MainActivity.weekdays_syllabus_data = classParser.weekdays_syllabus_data;
@@ -366,5 +371,28 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
             builder.create().show();
             return true;
         }
+    }
+
+    @Override
+    public void get_token(String token) {
+        MainActivity.token = token;
+        boolean saved =
+            FileOperation.save_to_file(this, StringDataHelper.generate_token_file_name(cur_username), token);
+        if (!saved){
+            Toast.makeText(MainActivity.this, "保存Token文件失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+    }
+
+    /**
+     * 获取本地存储的token
+     */
+    public void get_local_token(){
+        String filename = StringDataHelper.generate_token_file_name(cur_username);
+        if (FileOperation.hasFile(this, filename)){
+            MainActivity.token = FileOperation.read_from_file(this, filename);
+        }else
+            MainActivity.token = "";
+
     }
 }
