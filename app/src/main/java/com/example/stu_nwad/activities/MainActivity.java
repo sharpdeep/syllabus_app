@@ -10,11 +10,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.stu_nwad.adapters.ListViewAdapter;
 import com.example.stu_nwad.helpers.LessonPullTask;
 import com.example.stu_nwad.helpers.StringDataHelper;
 import com.example.stu_nwad.helpers.UpdateHelper;
@@ -23,17 +25,15 @@ import com.example.stu_nwad.interfaces.TokenGetter;
 import com.example.stu_nwad.interfaces.UpdateHandler;
 import com.example.stu_nwad.parsers.ClassParser;
 import com.example.stu_nwad.helpers.FileOperation;
-import com.example.stu_nwad.helpers.HttpCommunication;
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.syllabus.R;
 import com.example.stu_nwad.syllabus.SyllabusVersion;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 
 
-public class MainActivity extends AppCompatActivity implements UpdateHandler, LessonHandler, TokenGetter{
+public class MainActivity extends AppCompatActivity implements  View.OnClickListener, UpdateHandler, LessonHandler, TokenGetter{
     public static Object[] weekdays_syllabus_data;     // 用于向显示课表的activity传递数据
     public static ArrayList<Lesson> weekends_syllabus_data;
     public static String info_about_syllabus;
@@ -60,7 +60,11 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
 //    private EditText address_edit;  // 服务器地址
     private EditText username_edit;
     private EditText passwd_edit;
-    private ListView syllabus_list_view;    // 用于显示所有课表的listview
+//    private ListView syllabus_list_view;    // 用于显示所有课表的list_view
+
+    private Spinner year_spinner;
+    private Spinner semester_spinner;
+    private Button query_button;
 
     // 如果已经显示过默认课表就没必要再显示了
     private boolean has_showed_default = false;
@@ -91,12 +95,19 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
 //        address_edit = (EditText) findViewById(R.id.address_edit);
         username_edit = (EditText) findViewById(R.id.username_edit);
         passwd_edit = (EditText) findViewById(R.id.passwd_edit);
-        syllabus_list_view = (ListView) findViewById(R.id.syllabus_list_view);
+//        syllabus_list_view = (ListView) findViewById(R.id.syllabus_list_view);
+
+        year_spinner = (Spinner) findViewById(R.id.year_spinner);
+        semester_spinner = (Spinner) findViewById(R.id.semester_spinner);
+        query_button = (Button) findViewById(R.id.query_syllabus_button);
     }
 
     private void setupViews(){
-        ListViewAdapter list_apapter = new ListViewAdapter(this);
-        syllabus_list_view.setAdapter(list_apapter);
+//        ListViewAdapter list_adapter = new ListViewAdapter(this);
+//        syllabus_list_view.setAdapter(list_adapter);
+
+        year_spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, YEARS));
+        semester_spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, SEMESTER));
 
         // 读取用户
         String[] user = FileOperation.load_user(this, USERNAME_FILE, PASSWORD_FILE);
@@ -104,6 +115,11 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
             username_edit.setText(user[0]);
             passwd_edit.setText(user[1]);
         }
+
+        // 选项卡
+
+        // listener
+        query_button.setOnClickListener(this);
     }
 
 
@@ -161,32 +177,28 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
                     info_about_syllabus = cur_username + " " + cur_year_string + " " + info[2];
                     has_showed_default = true;
                     parse_and_display(json_data);
-                    return;
                 }
             }
         }
     }
 
-    private void submit(int position, int view_id){
-        this.position = position;
+    private void submit_query_request(int year_index, int semester_index){
+        this.position = year_index;
         String username = username_edit.getText().toString();
         cur_username = username;
-//        String requestURL = address_edit.getText().toString();
-        String requestURL = this.getString(R.string.server_address);
-
-        String years = YEARS[position];  // 点击到列表的哪一项
+        String years = YEARS[year_index];  // 点击到列表的哪一项
         cur_year_string = years;    // 用于共享目的
         semester = null;
-        switch (view_id){
-            case R.id.spring_text_view:
+        switch (semester_index){
+            case 0:
                 semester = "SPRING";
                 cur_semester = 2;
                 break;
-            case R.id.summer_text_view:
+            case 1:
                 semester = "SUMMER";
                 cur_semester = 3;
                 break;
-            case R.id.autumn_text_view:
+            case 2:
                 semester = "AUTUMN";
                 cur_semester = 1;
                 break;
@@ -303,23 +315,40 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
             FileOperation.save_user(MainActivity.this, USERNAME_FILE, PASSWORD_FILE, username, passwd_edit.getText().toString());
         }
     }
-    // 获取内部类的实例
-    public ShowSyllabus getOnClickListener(int position){
-        return new ShowSyllabus(position);
-    }
+//    // 获取内部类的实例
+//    public ShowSyllabus getOnClickListener(int position){
+//        return new ShowSyllabus(position);
+//    }
 
-    public class ShowSyllabus implements View.OnClickListener{
-        private int position; // 保存了点击的项是在列表中的哪一行
-        
-        public ShowSyllabus(int position){
-            this.position = position;
-        }
-
-        @Override
-        public void onClick(View v) {
-            submit(position, v.getId());
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.query_syllabus_button:
+                query_syllabus();
+                break;
+            default:
+                break;
         }
     }
+
+    private void query_syllabus(){
+        int year_index = year_spinner.getSelectedItemPosition();
+        int semester_index = semester_spinner.getSelectedItemPosition();
+        submit_query_request(year_index, semester_index);
+    }
+
+//    public class ShowSyllabus implements View.OnClickListener{
+//        private int position; // 保存了点击的项是在列表中的哪一行
+//
+//        public ShowSyllabus(int position){
+//            this.position = position;
+//        }
+//
+//        @Override
+//        public void onClick(View v) {
+//            submit(position, v.getId());
+//        }
+//    }
 
     public LongTimeClickListener getOnLongClickListener(int position){
         return new LongTimeClickListener(position);
