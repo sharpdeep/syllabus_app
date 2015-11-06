@@ -3,7 +3,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
     private Spinner year_spinner;
     private Spinner semester_spinner;
     private Button query_button;
+    private TextView delete_cached_files_view;
 
     // 如果已经显示过默认课表就没必要再显示了
     private boolean has_showed_default = false;
@@ -100,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         year_spinner = (Spinner) findViewById(R.id.year_spinner);
         semester_spinner = (Spinner) findViewById(R.id.semester_spinner);
         query_button = (Button) findViewById(R.id.query_syllabus_button);
+        delete_cached_files_view = (TextView) findViewById(R.id.delete_cached_files_text_view);
     }
 
     private void setupViews(){
@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
         // listener
         query_button.setOnClickListener(this);
+        delete_cached_files_view.setOnClickListener(this);
     }
 
 
@@ -306,6 +307,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
             String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
 //                    String filename = username + "_" + YEARS[position] + "_"
 //                            + semester;
+            // 缓存课表信息
             String filename = StringDataHelper.generate_syllabus_file_name(username, YEARS[position], semester, "_");
             if (FileOperation.save_to_file(MainActivity.this, filename, json_data)){
 //                        Toast.makeText(MainActivity.this, "成功保存文件 " + filename, Toast.LENGTH_SHORT).show();
@@ -315,16 +317,15 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
             FileOperation.save_user(MainActivity.this, USERNAME_FILE, PASSWORD_FILE, username, passwd_edit.getText().toString());
         }
     }
-//    // 获取内部类的实例
-//    public ShowSyllabus getOnClickListener(int position){
-//        return new ShowSyllabus(position);
-//    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.query_syllabus_button:
                 query_syllabus();
+                break;
+            case R.id.delete_cached_files_text_view:
+                delete_cached_file();
                 break;
             default:
                 break;
@@ -337,70 +338,28 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
         submit_query_request(year_index, semester_index);
     }
 
-//    public class ShowSyllabus implements View.OnClickListener{
-//        private int position; // 保存了点击的项是在列表中的哪一行
-//
-//        public ShowSyllabus(int position){
-//            this.position = position;
-//        }
-//
-//        @Override
-//        public void onClick(View v) {
-//            submit(position, v.getId());
-//        }
-//    }
-
-    public LongTimeClickListener getOnLongClickListener(int position){
-        return new LongTimeClickListener(position);
+    private void delete_cached_file(){
+        String username = username_edit.getText().toString();
+        int year_index = year_spinner.getSelectedItemPosition();
+        String semester_name = semester_spinner.getSelectedItem().toString();
+        String filename = StringDataHelper.generate_syllabus_file_name(username,
+                 YEARS[year_index], semester_name, "_");
+//        Toast.makeText(MainActivity.this, "filename: " + filename, Toast.LENGTH_SHORT).show();
+        delete_cache_file(this, filename);
     }
 
-    public class LongTimeClickListener implements View.OnLongClickListener{
+    private void delete_cache_file(Context context, String file_name){
+        if (FileOperation.hasFile(context, file_name)){
+            if (FileOperation.delete_file(context, file_name))
+                Toast.makeText(context, "成功删除缓存文件", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(context, "删除缓存文件失败", Toast.LENGTH_SHORT).show();
+        }else
+            Toast.makeText(context, "不存在该缓存文件", Toast.LENGTH_SHORT).show();
 
-        private int position;
-
-        public LongTimeClickListener(int pos){
-            this.position = pos;
-        }
-
-        private void delete_cache_file(Context context, String file_name){
-            if (FileOperation.hasFile(context, file_name)){
-                if (FileOperation.delete_file(context, file_name))
-                    Toast.makeText(context, "成功删除缓存文件", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(context, "删除缓存文件失败", Toast.LENGTH_SHORT).show();
-            }else
-                Toast.makeText(context, "不存在该缓存文件", Toast.LENGTH_SHORT).show();
-
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            final int id = v.getId();
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("清除缓存文件");
-            TextView text = (TextView) v;
-            builder.setMessage("清除 " + YEARS[position] + " " + text.getText().toString().replace("\n", "") + " 课表?");
-            builder.setPositiveButton("清除", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-//                    Toast.makeText(MainActivity.this, "清除缓存文件", Toast.LENGTH_SHORT).show();
-                    String username = username_edit.getText().toString();
-                    String semester = StringDataHelper.semester_from_view_id(id);
-                    String file_name = StringDataHelper.generate_syllabus_file_name(username, YEARS[position], semester, "_");
-                    delete_cache_file(MainActivity.this, file_name);
-                    dialog.dismiss();
-                }
-            });
-            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.create().show();
-            return true;
-        }
     }
+
+
 
     @Override
     public void get_token(String token) {
