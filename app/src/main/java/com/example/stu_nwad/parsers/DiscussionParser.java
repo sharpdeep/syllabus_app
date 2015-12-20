@@ -38,11 +38,13 @@ public class DiscussionParser {
                 String content = dis_obj.getString("content");
                 String publisher = dis_obj.getString("publisher");
                 long pub_time = dis_obj.getLong("time");
+                int id = dis_obj.getInt("id");  // 在数据库中的主键值
 
                 Discussion discussion = new Discussion();
                 discussion.content = content;
                 discussion.publisher = publisher;
                 discussion.pub_time = pub_time;
+                discussion.id = id;
 
                 discussions.add(discussion);
             }

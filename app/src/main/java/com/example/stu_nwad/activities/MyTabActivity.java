@@ -5,7 +5,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -15,7 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stu_nwad.adapters.DiscussionAdapter;
+import com.example.stu_nwad.helpers.ClipboardHelper;
+import com.example.stu_nwad.helpers.DeleteTask;
+import com.example.stu_nwad.helpers.JSONHelper;
 import com.example.stu_nwad.helpers.StringDataHelper;
+import com.example.stu_nwad.interfaces.AfterDeleteHandler;
 import com.example.stu_nwad.syllabus.Discussion;
 import com.example.stu_nwad.interfaces.DiscussionHandler;
 import com.example.stu_nwad.helpers.FileOperation;
@@ -37,8 +44,10 @@ import java.util.HashMap;
 
 /**
  * Created by STU_nwad on 2015/10/7.
+ * 交互信息
  */
-public class MyTabActivity extends AppCompatActivity implements View.OnClickListener, HomeworkHandler, DiscussionHandler, TabHost.OnTabChangeListener{
+public class MyTabActivity extends AppCompatActivity implements View.OnClickListener, HomeworkHandler,
+        DiscussionHandler, TabHost.OnTabChangeListener, AfterDeleteHandler{
 
     public static Lesson lesson;
 
@@ -154,6 +163,10 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
         submit_discussion_button.setOnClickListener(this);
         discussion_history_button.setOnClickListener(this);
         homework_submit_button.setClickable(true);
+
+        // 注册上下文菜单
+        registerForContextMenu(discussion_list_view);
+
     }
 
 
@@ -166,12 +179,45 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("请选择一个操作");
+        menu.add(0, v.getId(), 0, "复制");
+        menu.add(0, v.getId(), 0, "删除");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int index = info.position;
+        Discussion discussion = (Discussion) discussion_list_view.getItemAtPosition(index);
+        //  info.position will give the index of selected item
+        if (item.getTitle().equals("复制")){
+            ClipboardHelper.setContent(this, discussion.content);
+            Toast.makeText(MyTabActivity.this, "成功复制到剪贴板", Toast.LENGTH_SHORT).show();
+            return true;
+        }else if (item.getTitle().equals("删除")){
+            // 删除信息
+
+            HashMap<String, String> delete_data = new HashMap<>();
+            delete_data.put("resource_id", discussion.id + "");
+            delete_data.put("token", MainActivity.token);
+            delete_data.put("user", MainActivity.cur_username);
+
+            DeleteTask task = new DeleteTask(this, this, DeleteTask.DELETE_DISCUSSION, index);
+            task.execute(delete_data);
+            return true;
+        }
+        return false;
+    }
 
     private boolean save_comment(){
         if (personal_comment_area.getText().toString().isEmpty())
             return false;
         // 到这里即内容没有改变
-
 
         if (personal_comment_area.getText().toString().equals(personal_comment))
             return false;
@@ -236,7 +282,7 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
 
     /**
      * 添加验证课程的信息
-     * @param data
+     * @param data  用于POST传送的数据
      */
     private void add_lesson_identifier(HashMap<String, String> data){
         // 对应到具体的课程
@@ -435,6 +481,24 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
             data.put("code", hash_code);
     }
 
+    @Override
+    public void deal_with_delete(String response, int position) {
+        String error = JSONHelper.check_and_get_error(response);
+        if (error != null){
+            if (error.equals(DeleteTask.ERROR_WRONG_TOKEN))
+                Toast.makeText(MyTabActivity.this, "该账号在其他地方登陆过，请返回主界面清除课程缓存文件。", Toast.LENGTH_SHORT).show();
+            else if (error.equals(DeleteTask.ERROR_NO_AUTHORIZED)){
+                Toast.makeText(MyTabActivity.this, "只能删除自己的信息哟", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        // 代表删除成功
+        Discussion discussion = (Discussion) discussion_list_view.getItemAtPosition(position);
+        discussionAdapter.remove(discussion);
+        discussionAdapter.notifyDataSetChanged();
+        Toast.makeText(MyTabActivity.this, "成功删除信息" , Toast.LENGTH_SHORT).show();
+    }
+
 
     /**
      * 用于完成 需要 POST 的网络任务
@@ -503,9 +567,9 @@ public class MyTabActivity extends AppCompatActivity implements View.OnClickList
             this.address = addr;
         }
 
-        public void setAddress(String addr){
-            this.address = addr;
-        }
+//        public void setAddress(String addr){
+//            this.address = addr;
+//        }
 
         @Override
         protected String doInBackground(HashMap<String, String>... params) {

@@ -19,6 +19,8 @@ public class Discussion {
     public String publisher;
     public long pub_time;
 
+    public int id;  // 在数据库中的id
+
     public String transfer_time(){
         Calendar calendar =  Calendar.getInstance();
         calendar.setTimeInMillis(pub_time * 1000);  // 这个是毫秒

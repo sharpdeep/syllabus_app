@@ -27,6 +27,7 @@ public class HttpCommunication {
     /**
      * 访问远程网站，获取信息
      * @param hostaddr 远程地址
+     * @param timeout 秒
      * @return "" 或者具体的内容
      */
     public static String perform_get_call(String hostaddr, int timeout){
@@ -45,7 +46,7 @@ public class HttpCommunication {
                 String line;
                 BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 while ((line=br.readLine()) != null) {
-                    response+=line;
+                    response += line;
                 }
                 Log.d(MainActivity.TAG, "GET CALL OK");
 
@@ -54,6 +55,36 @@ public class HttpCommunication {
                 response = "";
                 Log.d(MainActivity.TAG, "GET CALL BAD");
             }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    public static String perform_delete_call(String address, int timeout){
+        URL url;
+        String response = "";
+        try {
+            url = new URL(address);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(timeout);
+            connection.setReadTimeout(timeout);
+            connection.setDoInput(true);
+            connection.setRequestMethod("DELETE");
+            connection.connect();
+            int response_code = connection.getResponseCode();
+            if (response_code == HttpURLConnection.HTTP_OK){
+                String line;
+                BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line=br.readLine()) != null) {
+                    response += line;
+                }
+            }else{
+                response = "";
+            }
+            return response;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

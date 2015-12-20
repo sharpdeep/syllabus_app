@@ -3,42 +3,43 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.stu_nwad.adapters.ListViewAdapter;
 import com.example.stu_nwad.helpers.LessonPullTask;
 import com.example.stu_nwad.helpers.StringDataHelper;
 import com.example.stu_nwad.helpers.UpdateHelper;
 import com.example.stu_nwad.interfaces.LessonHandler;
+import com.example.stu_nwad.interfaces.TokenGetter;
 import com.example.stu_nwad.interfaces.UpdateHandler;
 import com.example.stu_nwad.parsers.ClassParser;
 import com.example.stu_nwad.helpers.FileOperation;
-import com.example.stu_nwad.helpers.HttpCommunication;
 import com.example.stu_nwad.syllabus.Lesson;
 import com.example.stu_nwad.syllabus.R;
 import com.example.stu_nwad.syllabus.SyllabusVersion;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 
 
-public class MainActivity extends AppCompatActivity implements UpdateHandler, LessonHandler {
+public class MainActivity extends AppCompatActivity implements  View.OnClickListener, UpdateHandler, LessonHandler, TokenGetter{
     public static Object[] weekdays_syllabus_data;     // 用于向显示课表的activity传递数据
     public static ArrayList<Lesson> weekends_syllabus_data;
     public static String info_about_syllabus;
     public static final String USERNAME_FILE = "username.txt";
     public static final String PASSWORD_FILE = "password.txt";
 
+    // 用户的token数据
+    public static String token = "";
 
     // 用于和其他activity共享的数据
     public static String cur_year_string;
@@ -57,7 +58,12 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
 //    private EditText address_edit;  // 服务器地址
     private EditText username_edit;
     private EditText passwd_edit;
-    private ListView syllabus_list_view;    // 用于显示所有课表的listview
+//    private ListView syllabus_list_view;    // 用于显示所有课表的list_view
+
+    private Spinner year_spinner;
+    private Spinner semester_spinner;
+    private Button query_button;
+    private TextView delete_cached_files_view;
 
     // 如果已经显示过默认课表就没必要再显示了
     private boolean has_showed_default = false;
@@ -88,12 +94,20 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
 //        address_edit = (EditText) findViewById(R.id.address_edit);
         username_edit = (EditText) findViewById(R.id.username_edit);
         passwd_edit = (EditText) findViewById(R.id.passwd_edit);
-        syllabus_list_view = (ListView) findViewById(R.id.syllabus_list_view);
+//        syllabus_list_view = (ListView) findViewById(R.id.syllabus_list_view);
+
+        year_spinner = (Spinner) findViewById(R.id.year_spinner);
+        semester_spinner = (Spinner) findViewById(R.id.semester_spinner);
+        query_button = (Button) findViewById(R.id.query_syllabus_button);
+        delete_cached_files_view = (TextView) findViewById(R.id.delete_cached_files_text_view);
     }
 
     private void setupViews(){
-        ListViewAdapter list_apapter = new ListViewAdapter(this);
-        syllabus_list_view.setAdapter(list_apapter);
+//        ListViewAdapter list_adapter = new ListViewAdapter(this);
+//        syllabus_list_view.setAdapter(list_adapter);
+
+        year_spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, YEARS));
+        semester_spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, SEMESTER));
 
         // 读取用户
         String[] user = FileOperation.load_user(this, USERNAME_FILE, PASSWORD_FILE);
@@ -101,6 +115,12 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
             username_edit.setText(user[0]);
             passwd_edit.setText(user[1]);
         }
+
+        // 选项卡
+
+        // listener
+        query_button.setOnClickListener(this);
+        delete_cached_files_view.setOnClickListener(this);
     }
 
 
@@ -158,32 +178,28 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
                     info_about_syllabus = cur_username + " " + cur_year_string + " " + info[2];
                     has_showed_default = true;
                     parse_and_display(json_data);
-                    return;
                 }
             }
         }
     }
 
-    private void submit(int position, int view_id){
-        this.position = position;
+    private void submit_query_request(int year_index, int semester_index){
+        this.position = year_index;
         String username = username_edit.getText().toString();
         cur_username = username;
-//        String requestURL = address_edit.getText().toString();
-        String requestURL = this.getString(R.string.server_address);
-
-        String years = YEARS[position];  // 点击到列表的哪一项
+        String years = YEARS[year_index];  // 点击到列表的哪一项
         cur_year_string = years;    // 用于共享目的
         semester = null;
-        switch (view_id){
-            case R.id.spring_text_view:
+        switch (semester_index){
+            case 0:
                 semester = "SPRING";
                 cur_semester = 2;
                 break;
-            case R.id.summer_text_view:
+            case 1:
                 semester = "SUMMER";
                 cur_semester = 3;
                 break;
-            case R.id.autumn_text_view:
+            case 2:
                 semester = "AUTUMN";
                 cur_semester = 1;
                 break;
@@ -197,6 +213,8 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
         String filename = StringDataHelper.generate_syllabus_file_name(username, years, semester, "_");
         String json_data = FileOperation.read_from_file(MainActivity.this, filename);
         if (json_data != null) {
+            // 读取之前存的token
+            get_local_token();
             parse_and_display(json_data);
             return;
         }
@@ -275,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
     private void parse_and_display(String json_data){
 //        if (classParser == null)
         // 每次用新的classParser [暂时这样修复这个BUG]
-        classParser = new ClassParser(this);
+        classParser = new ClassParser(this, this);
         if (classParser.parseJSON(json_data)) {
             classParser.inflateTable();     // 用数据填充课表
             MainActivity.weekdays_syllabus_data = classParser.weekdays_syllabus_data;
@@ -289,6 +307,7 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
             String username = ((EditText) MainActivity.this.findViewById(R.id.username_edit)).getText().toString();
 //                    String filename = username + "_" + YEARS[position] + "_"
 //                            + semester;
+            // 缓存课表信息
             String filename = StringDataHelper.generate_syllabus_file_name(username, YEARS[position], semester, "_");
             if (FileOperation.save_to_file(MainActivity.this, filename, json_data)){
 //                        Toast.makeText(MainActivity.this, "成功保存文件 " + filename, Toast.LENGTH_SHORT).show();
@@ -298,73 +317,70 @@ public class MainActivity extends AppCompatActivity implements UpdateHandler, Le
             FileOperation.save_user(MainActivity.this, USERNAME_FILE, PASSWORD_FILE, username, passwd_edit.getText().toString());
         }
     }
-    // 获取内部类的实例
-    public ShowSyllabus getOnClickListener(int position){
-        return new ShowSyllabus(position);
-    }
 
-    public class ShowSyllabus implements View.OnClickListener{
-        private int position; // 保存了点击的项是在列表中的哪一行
-        
-        public ShowSyllabus(int position){
-            this.position = position;
-        }
-
-        @Override
-        public void onClick(View v) {
-            submit(position, v.getId());
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.query_syllabus_button:
+                query_syllabus();
+                break;
+            case R.id.delete_cached_files_text_view:
+                delete_cached_file();
+                break;
+            default:
+                break;
         }
     }
 
-    public LongTimeClickListener getOnLongClickListener(int position){
-        return new LongTimeClickListener(position);
+    private void query_syllabus(){
+        int year_index = year_spinner.getSelectedItemPosition();
+        int semester_index = semester_spinner.getSelectedItemPosition();
+        submit_query_request(year_index, semester_index);
     }
 
-    public class LongTimeClickListener implements View.OnLongClickListener{
+    private void delete_cached_file(){
+        String username = username_edit.getText().toString();
+        int year_index = year_spinner.getSelectedItemPosition();
+        String semester_name = semester_spinner.getSelectedItem().toString();
+        String filename = StringDataHelper.generate_syllabus_file_name(username,
+                 YEARS[year_index], semester_name, "_");
+//        Toast.makeText(MainActivity.this, "filename: " + filename, Toast.LENGTH_SHORT).show();
+        delete_cache_file(this, filename);
+    }
 
-        private int position;
+    private void delete_cache_file(Context context, String file_name){
+        if (FileOperation.hasFile(context, file_name)){
+            if (FileOperation.delete_file(context, file_name))
+                Toast.makeText(context, "成功删除缓存文件", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(context, "删除缓存文件失败", Toast.LENGTH_SHORT).show();
+        }else
+            Toast.makeText(context, "不存在该缓存文件", Toast.LENGTH_SHORT).show();
 
-        public LongTimeClickListener(int pos){
-            this.position = pos;
+    }
+
+
+
+    @Override
+    public void get_token(String token) {
+        MainActivity.token = token;
+        boolean saved =
+            FileOperation.save_to_file(this, StringDataHelper.generate_token_file_name(cur_username), token);
+        if (!saved){
+            Toast.makeText(MainActivity.this, "保存Token文件失败", Toast.LENGTH_SHORT).show();
+            return;
         }
+    }
 
-        private void delete_cache_file(Context context, String file_name){
-            if (FileOperation.hasFile(context, file_name)){
-                if (FileOperation.delete_file(context, file_name))
-                    Toast.makeText(context, "成功删除缓存文件", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(context, "删除缓存文件失败", Toast.LENGTH_SHORT).show();
-            }else
-                Toast.makeText(context, "不存在该缓存文件", Toast.LENGTH_SHORT).show();
+    /**
+     * 获取本地存储的token
+     */
+    public void get_local_token(){
+        String filename = StringDataHelper.generate_token_file_name(cur_username);
+        if (FileOperation.hasFile(this, filename)){
+            MainActivity.token = FileOperation.read_from_file(this, filename);
+        }else
+            MainActivity.token = "";
 
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            final int id = v.getId();
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("清除缓存文件");
-            TextView text = (TextView) v;
-            builder.setMessage("清除 " + YEARS[position] + " " + text.getText().toString().replace("\n", "") + " 课表?");
-            builder.setPositiveButton("清除", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-//                    Toast.makeText(MainActivity.this, "清除缓存文件", Toast.LENGTH_SHORT).show();
-                    String username = username_edit.getText().toString();
-                    String semester = StringDataHelper.semester_from_view_id(id);
-                    String file_name = StringDataHelper.generate_syllabus_file_name(username, YEARS[position], semester, "_");
-                    delete_cache_file(MainActivity.this, file_name);
-                    dialog.dismiss();
-                }
-            });
-            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.create().show();
-            return true;
-        }
     }
 }

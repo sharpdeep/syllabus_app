@@ -15,6 +15,7 @@
     <string name="insert_home_work_api">http://10.22.27.65/api/homework</string>
     <string name="insert_discussion_api">http://10.22.27.65/api/discuss</string>
     <string name="version_control_address">http://10.22.27.65/api/version</string>
+    <string name="delete_api">http://10.22.27.65/api/v1.0/delete/</string>
     <string name="title_activity_history">历史记录</string>
     <string name="title_activity_about">Small Fly\'s Words</string>
     <string name="action_settings">Settings</string>
@@ -27,7 +28,7 @@
     <string name="summer">夏季\n学期</string>
 
     <string name="version_code">1</string>
-    <string name="version_name">Ver1.3</string>
+    <string name="version_name">Ver1.4</string>
     <string name="releaser">smallfly</string>
 
     <string name="username">账号</string>
@@ -35,13 +36,9 @@
     <string name="username_hint">username</string>
     <string name="password_hint">password</string>
 
+    <string name="query_syllabus_button">查询课表</string>
+    <string name="clear_cached_files">清除缓存的课表文件</string>
 
-    <string name="about_information">
-        哈哈，你竟然点进这里来了!
-        本来打算写点什么的，但是真到了要写的时候却不知道写什么了。
-        诶诶，希望你喜欢这个应用: ) 那是最大的鼓励.
-        By 晓拂, 2015/10/14 21:14
-    </string>
     <string name="title_activity_update">更新界面</string>
 
     <string name="hello_world">Hello world!</string>
